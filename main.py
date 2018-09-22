@@ -13,9 +13,9 @@ g_funciones_1: T_VAR_TYPE
              | T_VOID
 g_funciones_2: T_VAR_ID T_PUNTO_PUNTO T_VAR_TYPE [(T_COMMA T_VAR_ID T_PUNTO_PUNTO T_VAR_TYPE)*]
 g_funciones_3: T_LEFT_CRULY_BRAKET g_variables? g_estatutos g_funciones_4 T_RIGHT_CRULY_BRAKET
-g_funciones_4: [T_RETURN g_var_cte]
+g_funciones_4: [T_RETURN g_var_cte T_PUNTO_COMA]
 
-g_main: T_DIBUJAR T_LEFT_PAR T_RIGHT_PAR T_LEFT_CRULY_BRAKET g_estatutos T_RIGHT_CRULY_BRAKET
+g_main: T_DIBUJAR T_LEFT_PAR T_RIGHT_PAR T_LEFT_CRULY_BRAKET [g_variables] (g_estatutos)* T_RIGHT_CRULY_BRAKET
 
 g_dibujar_acciones: g_dibujar_acciones_1 g_expresion T_PUNTO_COMA
 g_dibujar_acciones_1: T_ADELANTE
@@ -27,16 +27,16 @@ g_estatutos: g_condicional
            | g_dibujar_objetos
            | g_asignacion
            | g_escritura
+           | T_FUN_ID T_LEFT_PAR [g_expresion [(T_COMMA g_expresion)*]] T_RIGHT_PAR T_PUNTO_COMA
 
-g_dibujar_objetos: T_CUADRADO g_expresion T_COMMA g_expresion T_COMMA g_expresion T_COMMA T_POUND T_NUM_INT T_COMMA T_NUM_INT T_PUNTO_COMA
-                 | T_CIRCULO g_expresion T_COMMA g_expresion T_COMMA g_expresion T_COMMA T_POUND T_NUM_INT T_COMMA T_NUM_INT T_PUNTO_COMA
-                 | T_TRIANGULO g_expresion T_COMMA g_expresion T_COMMA g_expresion T_COMMA g_expresion T_COMMA T_POUND T_NUM_INT T_COMMA T_NUM_INT T_PUNTO_COMA
-                 | T_TEXTO g_expresion T_COMMA g_expresion T_COMMA T_ID T_COMMA T_POUND T_NUM_INT T_COMMA T_NUM_INT T_PUNTO_COMA
+g_dibujar_objetos: T_CUADRADO g_expresion T_COMMA g_expresion T_COMMA g_expresion T_COMMA T_COLOR T_COMMA T_NUM_INT T_PUNTO_COMA
+                 | T_CIRCULO g_expresion T_COMMA g_expresion T_COMMA g_expresion T_COMMA T_COLOR T_COMMA T_NUM_INT T_PUNTO_COMA
+                 | T_TRIANGULO g_expresion T_COMMA g_expresion T_COMMA g_expresion T_COMMA g_expresion T_COMMA T_COLOR T_COMMA T_NUM_INT T_PUNTO_COMA
+                 | T_TEXTO g_expresion T_COMMA g_expresion T_COMMA T_COMILLA T_ID T_COMILLA T_COMMA T_COLOR T_COMMA T_NUM_INT T_PUNTO_COMA
 
 g_escritura: T_IMPRIMIR g_expresion T_PUNTO_COMA
 
-g_expresion: g_exp
-           | (g_relacional g_exp)?
+g_expresion: g_exp [g_relacional g_exp]
 
 g_relacional: T_MAYOR_QUE
             | T_MENOR_QUE
@@ -75,7 +75,7 @@ g_condicional_1: T_LEFT_CRULY_BRAKET [(g_estatutos)*] T_RIGHT_CRULY_BRAKET
 
 // TOKENS
 T_PROGRAM: "programa"i
-T_COMILLA: /\"/
+T_COMILLA: /(\"|\')/
 T_ID: /[A-Za-z]+/
 T_PUNTO_COMA: ";"
 T_VAR: "var"i
@@ -88,7 +88,7 @@ T_NUM_INT: INT
 T_COMMA: ","
 T_FUN: "funcion"
 T_VOID: "void"
-T_FUN_ID: /\~LETTER+/
+T_FUN_ID: /~[A-Za-z]+/
 T_LEFT_PAR: "("
 T_RIGHT_PAR: ")"
 T_LEFT_CRULY_BRAKET: "{"
@@ -117,6 +117,7 @@ T_IGUAL_IGUAL_QUE: "=="
 T_MAYOR_IGUAL_QUE: ">="
 T_MENOR_IGUAL_QUE: "<="
 T_DIFERENTE_QUE: "<>"
+T_COLOR: /rgb\((\d+),(\d+),(\d+)\)/
 
 
 
@@ -151,9 +152,10 @@ dibujar(){
 
   adelante 60;
   rotar &i;
-  cuadro 5;
-  circulo 10;
-  triangulo &j, 10;
+  cuadrado 5, 6, 19, rgb(10,34,23), 5;
+  circulo 0,0,10,rgb(10,34,23),2;
+  triangulo &j, 10, ~uno(&x,&y),5, rgb(10,34,23), 2;
+  texto 1, 0, 'juancho', rgb(10,34,23), 24;
 
   mientras(&i < 10){
     &i = &i + 1;
