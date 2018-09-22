@@ -1,0 +1,33 @@
+class LexError(Exception):
+    pass
+
+class UnexpectedCharacters(LexError):
+    def __init__(self, seq, lex_pos, line, column, allowed=None, considered_rules=None):
+        context = seq[lex_pos:lex_pos+5]
+        message = "No token defined for: '%s' in %r at line %d col %d" % (seq[lex_pos], context, line, column)
+        if allowed:
+            message += '\n\nExpecting: %s\n' % allowed
+
+        super(UnexpectedCharacters, self).__init__(message)
+
+        self.line = line
+        self.column = column
+        self.context = context
+        self.allowed = allowed
+        self.considered_rules = considered_rules
+
+class ParseError(Exception):
+    pass
+
+class UnexpectedToken(ParseError):
+    def __init__(self, token, expected, considered_rules=None, state=None):
+        self.token = token
+        self.expected = expected
+        self.line = getattr(token, 'line', '?')
+        self.column = getattr(token, 'column', '?')
+        self.considered_rules = considered_rules
+
+        message = ("Unexpected token %r at line %s, column %s.\n"
+                   "Expected: %s\n" % (token, self.line, self.column, expected))
+
+        super(UnexpectedToken, self).__init__(message)

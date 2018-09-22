@@ -1,0 +1,11 @@
+language: python
+python:
+  - "2.7"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+  - "pypy"  # PyPy2 5.8.0
+  - "pypy3" # Pypy3 5.8.0-beta0
+install: pip install tox-travis
+script:
+  - tox
