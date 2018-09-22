@@ -1,14 +1,17 @@
 from lark import Lark
 
 l = Lark('''
-g_iniciar_programa: g_nombre_programa g_variables?
+g_iniciar_programa: g_nombre_programa g_variables? g_funciones? g_main
 
 g_nombre_programa: T_PROGRAM T_COMILLA T_ID T_COMILLA T_PUNTO_COMA
 
 g_variables: T_VAR T_VAR_ID T_PUNTO_PUNTO T_VAR_TYPE [T_LEFT_BRAKET T_NUM_INT T_RIGHT_BRAKET] g_variables_1 T_PUNTO_COMA
 g_variables_1: [(T_COMMA T_VAR_ID T_PUNTO_PUNTO T_VAR_TYPE [T_LEFT_BRAKET T_NUM_INT T_RIGHT_BRAKET])*]
 
-
+g_funciones: T_FUN T_PUNTO_PUNTO g_funciones_1 T_FUN_ID T_LEFT_PAR [g_funciones_2] T_RIGHT_PAR
+g_funciones_1: T_VAR_TYPE
+             | T_VOID
+g_funciones_2: T_VAR_ID T_PUNTO_PUNTO T_VAR_TYPE 
 
 
 
@@ -28,11 +31,14 @@ T_LEFT_BRAKET: "["
 T_RIGHT_BRAKET: "]"
 T_NUM_INT: INT
 T_COMMA: ","
-
-
-
-
+T_FUN: "funcion"
+T_VOID: "void"
 T_FUN_ID: /\~LETTER+/
+T_LEFT_PAR: "("
+T_RIGHT_PAR: ")"
+
+
+
 T_NUM_DEG: /(36[0]|3[0-5][0-9]|[12][0-9][0-9]|[1-9]?[0-9])/
 T_NUM_FLOAT: FLOAT
 
