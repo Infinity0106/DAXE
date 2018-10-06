@@ -1,21 +1,22 @@
 from lark import Lark
+from transformer import DaxeTransformer
 
-l = Lark('''
-g_iniciar_programa: g_nombre_programa g_variables? g_funciones? g_main
+daxe_parser = Lark('''
+g_iniciar_programa: g_nombre_programa g_variables? g_funciones* g_main
 
-g_nombre_programa: T_PROGRAM T_COMILLA T_ID T_COMILLA T_PUNTO_COMA
+g_nombre_programa: a_t_programa T_COMILLA a_t_id_programa T_COMILLA T_PUNTO_COMA
 
-g_variables: T_VAR T_VAR_ID T_PUNTO_PUNTO T_VAR_TYPE [T_LEFT_BRAKET T_NUM_INT T_RIGHT_BRAKET] g_variables_1 T_PUNTO_COMA
-g_variables_1: [(T_COMMA T_VAR_ID T_PUNTO_PUNTO T_VAR_TYPE [T_LEFT_BRAKET T_NUM_INT T_RIGHT_BRAKET])*]
+g_variables: a_t_var a_t_var_id_y_tipo [T_LEFT_BRAKET T_NUM_INT T_RIGHT_BRAKET] g_variables_1 T_PUNTO_COMA
+g_variables_1: [(T_COMMA a_t_var_id_y_tipo [T_LEFT_BRAKET T_NUM_INT T_RIGHT_BRAKET])*]
 
-g_funciones: T_FUN T_PUNTO_PUNTO g_funciones_1 T_FUN_ID T_LEFT_PAR [g_funciones_2] T_RIGHT_PAR g_funciones_3
-g_funciones_1: T_VAR_TYPE
-             | T_VOID
-g_funciones_2: T_VAR_ID T_PUNTO_PUNTO T_VAR_TYPE [(T_COMMA T_VAR_ID T_PUNTO_PUNTO T_VAR_TYPE)*]
-g_funciones_3: T_LEFT_CRULY_BRAKET g_variables? g_estatutos g_funciones_4 T_RIGHT_CRULY_BRAKET
+g_funciones: a_t_fun T_PUNTO_PUNTO g_funciones_1 a_t_fun_id a_t_fun_l_par [g_funciones_2] T_RIGHT_PAR g_funciones_3
+g_funciones_1: a_t_var_type
+             | a_t_var_void
+g_funciones_2: a_t_var_id_y_tipo [(T_COMMA a_t_var_id_y_tipo)*]
+g_funciones_3: T_LEFT_CRULY_BRAKET g_variables? g_estatutos g_funciones_4 g_t_end_function
 g_funciones_4: [T_RETURN g_var_cte T_PUNTO_COMA]
 
-g_main: T_DIBUJAR T_LEFT_PAR T_RIGHT_PAR T_LEFT_CRULY_BRAKET [g_variables] (g_estatutos)* T_RIGHT_CRULY_BRAKET
+g_main: T_DIBUJAR T_LEFT_PAR T_RIGHT_PAR T_LEFT_CRULY_BRAKET [g_variables] (g_estatutos)* a_t_end_program
 
 g_dibujar_acciones: g_dibujar_acciones_1 g_expresion T_PUNTO_COMA
 g_dibujar_acciones_1: T_ADELANTE
@@ -71,7 +72,20 @@ g_var_cte: T_ID
          
 g_condicional: T_IF T_LEFT_PAR g_expresion T_RIGHT_PAR g_condicional_1 [T_ELSE g_condicional_1]
 g_condicional_1: T_LEFT_CRULY_BRAKET [(g_estatutos)*] T_RIGHT_CRULY_BRAKET
-		
+
+// ACTIONS
+a_t_programa: T_PROGRAM
+a_t_id_programa: T_ID
+a_t_var: T_VAR
+a_t_var_id_y_tipo: T_VAR_ID T_PUNTO_PUNTO a_t_var_type
+a_t_end_program: T_RIGHT_CRULY_BRAKET
+a_t_var_type: T_VAR_TYPE
+a_t_var_void: T_VOID
+a_t_fun: T_FUN
+a_t_fun_id: T_FUN_ID
+a_t_fun_l_par: T_LEFT_PAR
+g_t_end_function: T_RIGHT_CRULY_BRAKET
+
 
 // TOKENS
 T_PROGRAM: "programa"i
@@ -133,7 +147,7 @@ T_NUM_FLOAT: FLOAT
 %ignore WS
 ''', start='g_iniciar_programa', parser='lalr')
 
-print( l.parse('''
+tree = daxe_parser.parse('''
 programa "prueba";
 var &i : entero, &j : decimal;
 
@@ -145,6 +159,15 @@ funcion : entero ~uno(&juan : entero, &pancho : decimal){
     imprimir &j;
   }
   regresar &k;
+}
+
+funcion : void ~dos(&juan : entero, &pancho : decimal){
+  var &k : entero;
+  si(&juan < &pancho){
+    imprimir &i;
+  } sino {
+    imprimir &j;
+  }
 }
 
 dibujar(){
@@ -163,5 +186,7 @@ dibujar(){
 
   ~uno(&i, &j);
 }
-''') )
-print("PARSE SUCCESSFUL")
+''')
+
+DaxeTransformer().visit(tree)
+# print(DaxeTransformer().visit(tree))
