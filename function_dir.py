@@ -33,7 +33,6 @@ class FunctionsDir:
     }
 
   def delete_current_var_table(self):
-    print(self.dir)
     del self.dir[self.current_func]["vars"]
 
   def add_variable(self, var_name):
@@ -43,6 +42,10 @@ class FunctionsDir:
       "type": self.current_type
     }
 
+  def get_current_vars_table(self):
+    tmp = self.dir[self.current_func]["vars"].copy()
+    tmp.update(self.dir[self.program_key]["vars"])
+    return tmp
   # def delete(self, key):
   #   del self.dir[key]
 
