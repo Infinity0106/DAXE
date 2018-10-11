@@ -13,6 +13,7 @@ class SemanticCube:
           ">=":"booleano",
           "<=":"booleano",
           "<>":"booleano",
+          "=":"entero"
         },
         "decimal":{
           "+":"decimal",
@@ -25,6 +26,7 @@ class SemanticCube:
           ">=":"booleano",
           "<=":"booleano",
           "<>":"booleano",
+          "=":"ERROR"
         },
         "booleano":{
           "+":"ERROR",
@@ -37,6 +39,7 @@ class SemanticCube:
           ">=":"ERROR",
           "<=":"ERROR",
           "<>":"ERROR",
+          "=":"ERROR"
         }
       },
       "decimal":{
@@ -51,6 +54,7 @@ class SemanticCube:
           ">=":"booleano",
           "<=":"booleano",
           "<>":"booleano",
+          "=":"decimal"
         },
         "decimal":{
           "+":"decimal",
@@ -63,6 +67,7 @@ class SemanticCube:
           ">=":"booleano",
           "<=":"booleano",
           "<>":"booleano",
+          "=":"decimal"
         },
         "booleano":{
           "+":"ERROR",
@@ -75,6 +80,7 @@ class SemanticCube:
           ">=":"ERROR",
           "<=":"ERROR",
           "<>":"ERROR",
+          "=":"ERROR"
         }
       },
       "booleano":{
@@ -89,6 +95,7 @@ class SemanticCube:
           ">=":"ERROR",
           "<=":"ERROR",
           "<>":"ERROR",
+          "=":"ERROR"
         },
         "decimal":{
           "+":"ERROR",
@@ -101,6 +108,7 @@ class SemanticCube:
           ">=":"ERROR",
           "<=":"ERROR",
           "<>":"ERROR",
+          "=":"ERROR"
         },
         "booleano":{
           "+":"ERROR",
@@ -113,6 +121,7 @@ class SemanticCube:
           ">=":"booleano",
           "<=":"booleano",
           "<>":"booleano",
+          "=":"booleano"
         }
       },
     }

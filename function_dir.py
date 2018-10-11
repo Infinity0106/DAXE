@@ -22,7 +22,7 @@ class FunctionsDir:
 
   def add_function(self, name):
     if name in self.dir:
-      raise Exception("Multiple function declaration %s"%(name))
+      raise Exception("Multiple function declaration with the same name %s"%(name))
     self.dir[name]={}
     self.current_func=name
 

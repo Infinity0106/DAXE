@@ -60,9 +60,12 @@ class DaxeVisitor(Visitor_Recursive):
 
     def a_g_end_expresion(self, items):
         print("9. if poper.top() == rel.op then procede with 4 but different")
+        self.quads.algorithm_with([">","<","==",">=","<=","<>"])
 
     def a_g_relacional(self, items):
         print("8. poper.push(rel.op)")
+        token = items.children[0].children[0]
+        self.quads.add_operator(token.value)
 
     def a_g_exp_1(self, items):
         print("2. poper.push(+ or -)")
@@ -84,7 +87,6 @@ class DaxeVisitor(Visitor_Recursive):
     
     def a_g_factor_left_par(self, items):
         print("6. poper.push(false bottom)")
-        print(items.children)
         self.quads.add_operator("(")
 
     def a_g_factor_right_par(self, items):
@@ -99,17 +101,41 @@ class DaxeVisitor(Visitor_Recursive):
         if(len(items.children) == 1):
             if(items.children[0].type == 'T_VAR_ID'):
                 if items.children[0].value in variables:
-                    id_name = items.children[0].value
+                    id_name = items.children[0]
+                    type = variables[items.children[0].value]["type"]
+                else:
+                    raise Exception("Variable not defined %s, at: %s:%s"%(items.children[0].value, items.children[0].line, items.children[0].column))
+            if(items.children[0].type == 'T_NUM_INT'):
+                id_name = items.children[0]
+                type = "entero"
+            if(items.children[0].type == 'T_NUM_FLOAT'):
+                id_name = items.children[0]
+                type = "decimal"
+        self.quads.add_id(id_name, type)
+
+    def a_g_asignacion(self, items):
+        print("10. agregar id de la asignacion")
+        #TODO: poder insertar arreglos
+        variables=self.f_table.get_current_vars_table()
+        id_name=""
+        type=""
+        if(len(items.children) == 1):
+            if(items.children[0].type == 'T_VAR_ID'):
+                if items.children[0].value in variables:
+                    id_name = items.children[0]
                     type = variables[items.children[0].value]["type"]
                 else:
                     raise Exception("Variable not defined")
-            if(items.children[0].type == 'T_NUM_INT'):
-                id_name = items.children[0].value
-                type = "entero"
-            if(items.children[0].type == 'T_NUM_FLOAT'):
-                id_name = items.children[0].value
-                type = "decimal"
         self.quads.add_id(id_name, type)
+
+    def a_g_asignacion_igual(self, items):
+        print("11 agregar = en operadores")
+        token = items.children[0]
+        self.quads.add_operator(token.value)
+
+    def a_g_end_asignacion(self, items):
+        print("12 validar si hay un =")
+        self.quads.algorithm_with(["="])
 
     def g_expresion_1(self, items):
         print('@@@')

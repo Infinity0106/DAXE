@@ -1,5 +1,6 @@
 from custom_stack import Stack
 from semantic_cube import SemanticCube
+from lark import Token
 
 class Quadruplets:
   def __init__(self):
@@ -28,22 +29,19 @@ class Quadruplets:
       left_operand = self.operands.pop()
       left_type = self.types.pop()
       operator = self.operators.pop()
-      print(left_type)
-      print(right_type)
-      print(operator)
       result_type = self.semantic_cube.cube[left_type][right_type][operator]
       if result_type == "ERROR":
-        raise Exception("Type mismatch")
+        raise Exception("Type mismatch trying to assign (type: %s) to %s (type: %s), at: %s:%s"%(right_type, left_operand, left_type, left_operand.line, left_operand.column))
       else:
         self.num_aviables+=1
-        result_name = 'tmp'+str(len(self.records))
-        self.gen_quad(operator, left_operand, right_operand, result_name)
+        result_name = Token("T_TMP_ID", 'tmp'+str(len(self.records)))
+        self.gen_quad(operator, left_operand.value, right_operand.value, result_name.value)
         self.operands.push(result_name)
         self.types.push(result_type)
-    print(self.records)
-    print(self.operands.stack)
-    print(self.types.stack)
-    print(self.operators.stack)
 
   def gen_quad(self, op, lop, rop, res):
-    self.records.append([op,lop,rop,res])
+    if op == "=":
+      self.records.append([op,rop,None,lop])
+    else:
+      self.records.append([op,lop,rop,res])
+    print(self.records)

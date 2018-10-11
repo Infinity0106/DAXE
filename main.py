@@ -40,7 +40,7 @@ g_escritura: T_IMPRIMIR g_expresion T_PUNTO_COMA
 
 g_ciclo: T_MIENTRAS T_LEFT_PAR g_expresion T_RIGHT_PAR T_LEFT_CRULY_BRAKET [(g_estatutos)*] T_RIGHT_CRULY_BRAKET
 
-g_asignacion: T_VAR_ID [T_LEFT_BRAKET g_expresion T_RIGHT_BRAKET] T_IGUAL g_expresion T_PUNTO_COMA
+g_asignacion: a_g_asignacion a_g_asignacion_igual g_expresion a_g_end_asignacion
 
 g_expresion: g_exp [a_g_relacional g_exp a_g_end_expresion]
 
@@ -94,6 +94,9 @@ a_g_factor_right_par: T_RIGHT_PAR
 a_g_var_cte: T_VAR_ID
            | T_NUM_FLOAT
            | T_NUM_INT
+a_g_asignacion: T_VAR_ID [T_LEFT_BRAKET g_expresion T_RIGHT_BRAKET]
+a_g_asignacion_igual: T_IGUAL
+a_g_end_asignacion: T_PUNTO_COMA
 
 
 // TOKENS
@@ -164,7 +167,7 @@ var &i : entero,
     &y : entero;
 
 funcion : entero ~uno(&juan : entero, &pancho : decimal){
-  var &k : entero;
+  var &k : decimal;
   &k = 1 + 2 - 3 * (3.0 / 4);
   si(&juan < &pancho){
     imprimir &i;
