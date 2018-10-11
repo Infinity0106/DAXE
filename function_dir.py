@@ -46,14 +46,3 @@ class FunctionsDir:
     tmp = self.dir[self.current_func]["vars"].copy()
     tmp.update(self.dir[self.program_key]["vars"])
     return tmp
-  # def delete(self, key):
-  #   del self.dir[key]
-
-  # def delete_all(self):
-  #   self.dir.clear()
-
-  # def size(self):
-  #   return len(self.dir)
-
-  # def assign(self, key, val):
-  #   self.dir[key] = val

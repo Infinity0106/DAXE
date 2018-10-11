@@ -98,6 +98,7 @@ class DaxeVisitor(Visitor_Recursive):
         variables=self.f_table.get_current_vars_table()
         id_name=""
         type=""
+        print(items.children)
         if(len(items.children) == 1):
             if(items.children[0].type == 'T_VAR_ID'):
                 if items.children[0].value in variables:
@@ -137,9 +138,14 @@ class DaxeVisitor(Visitor_Recursive):
         print("12 validar si hay un =")
         self.quads.algorithm_with(["="])
 
-    def g_expresion_1(self, items):
-        print('@@@')
-        print(items)
-        print(items.children.append["1"])
-        print('@@@')
+    def a_g_escritura(self, items):
+        print("add key of printing")
+        self.quads.gen_custom_quad("PRINT")
 
+    def a_g_dibujar_rotar(self, items):
+        print("generate quad at the end for rotation movement")
+        self.quads.gen_custom_quad("ROT")
+
+    def a_g_dibujar_adelante(self, items):
+        print("generate quad at the end for forward movement")
+        self.quads.gen_custom_quad("MOVF")

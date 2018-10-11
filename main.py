@@ -19,9 +19,9 @@ g_funciones_4: [T_RETURN g_var_cte T_PUNTO_COMA]
 
 g_main: T_DIBUJAR T_LEFT_PAR T_RIGHT_PAR T_LEFT_CRULY_BRAKET [g_variables] (g_estatutos)* a_t_end_program
 
-g_dibujar_acciones: g_dibujar_acciones_1 g_expresion T_PUNTO_COMA
-g_dibujar_acciones_1: T_ADELANTE
-                    | T_ROTAR
+g_dibujar_acciones: g_dibujar_acciones_1 T_PUNTO_COMA
+g_dibujar_acciones_1: T_ADELANTE g_expresion a_g_dibujar_adelante
+                    | T_ROTAR g_expresion a_g_dibujar_rotar
 
 g_estatutos: g_condicional
            | g_ciclo
@@ -36,7 +36,7 @@ g_dibujar_objetos: T_CUADRADO g_expresion T_COMMA g_expresion T_COMMA g_expresio
                  | T_TRIANGULO g_expresion T_COMMA g_expresion T_COMMA g_expresion T_COMMA g_expresion T_COMMA T_COLOR T_COMMA T_NUM_INT T_PUNTO_COMA
                  | T_TEXTO g_expresion T_COMMA g_expresion T_COMMA T_COMILLA T_ID T_COMILLA T_COMMA T_COLOR T_COMMA T_NUM_INT T_PUNTO_COMA
 
-g_escritura: T_IMPRIMIR g_expresion T_PUNTO_COMA
+g_escritura: T_IMPRIMIR g_expresion a_g_escritura T_PUNTO_COMA
 
 g_ciclo: T_MIENTRAS T_LEFT_PAR g_expresion T_RIGHT_PAR T_LEFT_CRULY_BRAKET [(g_estatutos)*] T_RIGHT_CRULY_BRAKET
 
@@ -97,6 +97,11 @@ a_g_var_cte: T_VAR_ID
 a_g_asignacion: T_VAR_ID [T_LEFT_BRAKET g_expresion T_RIGHT_BRAKET]
 a_g_asignacion_igual: T_IGUAL
 a_g_end_asignacion: T_PUNTO_COMA
+
+a_g_escritura:
+a_g_dibujar_adelante:
+a_g_dibujar_rotar:
+
 
 
 // TOKENS
@@ -179,6 +184,8 @@ funcion : entero ~uno(&juan : entero, &pancho : decimal){
 
 funcion : void ~dos(&juan : entero, &pancho : decimal){
   var &k : entero;
+  imprimir &k;
+  imprimir (1+2-3*(4/3*4.3));
   si(&juan < &pancho){
     imprimir &i;
   } sino {
@@ -192,8 +199,8 @@ dibujar(){
   adelante 60;
   rotar &i;
   cuadrado 5, 6, 19, rgb(10,34,23), 5;
-  circulo 0,0,10,rgb(10,34,23),2;
-  triangulo &j, 10, ~uno(&x,&y),5, rgb(10,34,23), 2;
+  circulo 0, 0, 10, rgb(10,34,23), 2;
+  triangulo &j, 10, ~uno(&x,&y), 5, rgb(10,34,23), 2;
   texto 1, 0, 'juancho', rgb(10,34,23), 24;
 
   mientras(&i < 10){
