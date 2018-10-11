@@ -14,7 +14,7 @@ g_funciones: a_t_fun T_PUNTO_PUNTO g_funciones_1 a_t_fun_id a_t_fun_l_par [g_fun
 g_funciones_1: a_t_var_type
              | a_t_var_void
 g_funciones_2: a_t_var_id_y_tipo [(T_COMMA a_t_var_id_y_tipo)*]
-g_funciones_3: T_LEFT_CRULY_BRAKET g_variables? g_estatutos g_funciones_4 a_t_end_function
+g_funciones_3: T_LEFT_CRULY_BRAKET g_variables? (g_estatutos)* g_funciones_4 a_t_end_function
 g_funciones_4: [T_RETURN g_var_cte T_PUNTO_COMA]
 
 g_main: T_DIBUJAR T_LEFT_PAR T_RIGHT_PAR T_LEFT_CRULY_BRAKET [g_variables] (g_estatutos)* a_t_end_program
@@ -60,14 +60,10 @@ g_termino_1: T_MULTIPLICATION
 					 | T_DIVITION
 
 g_factor: a_g_factor_left_par g_expresion a_g_factor_right_par
-				| a_g_factor_var
-g_factor_1: T_PLUS
-					| T_MINUS
+				| g_var_cte
 
-g_var_cte: T_VAR_ID
+g_var_cte: a_g_var_cte
          | T_VAR_ID T_LEFT_BRAKET g_expresion T_RIGHT_BRAKET
-         | T_NUM_FLOAT
-         | T_NUM_INT
          | T_FUN_ID T_LEFT_PAR [g_expresion [(T_COMMA g_expresion)*]] T_RIGHT_PAR
 
 g_condicional: T_IF T_LEFT_PAR g_expresion T_RIGHT_PAR g_condicional_1 [T_ELSE g_condicional_1]
@@ -95,7 +91,9 @@ a_g_termino_1: g_termino_1
 a_g_termino_term: 
 a_g_factor_left_par: T_LEFT_PAR
 a_g_factor_right_par: T_RIGHT_PAR
-a_g_factor_var: g_factor_1? g_var_cte
+a_g_var_cte: T_VAR_ID
+           | T_NUM_FLOAT
+           | T_NUM_INT
 
 
 // TOKENS
@@ -109,7 +107,7 @@ T_PUNTO_PUNTO: ":"
 T_VAR_TYPE: /entero|decimal/
 T_LEFT_BRAKET: "["
 T_RIGHT_BRAKET: "]"
-T_NUM_INT: INT
+T_NUM_INT: SIGNED_INT
 T_COMMA: ","
 T_FUN: "funcion"
 T_VOID: "void"
@@ -147,12 +145,12 @@ T_COLOR: /rgb\((\d+),(\d+),(\d+)\)/
 
 
 T_NUM_DEG: /(36[0]|3[0-5][0-9]|[12][0-9][0-9]|[1-9]?[0-9])/
-T_NUM_FLOAT: FLOAT
+T_NUM_FLOAT: SIGNED_FLOAT
 
 
 %import common.WS
-%import common.INT
-%import common.FLOAT
+%import common.SIGNED_INT
+%import common.SIGNED_FLOAT
 %import common.LETTER
 
 %ignore WS
@@ -160,11 +158,15 @@ T_NUM_FLOAT: FLOAT
 
 tree_parsed = daxe_parser.parse('''
 programa "prueba";
-var &i : entero, &j : decimal;
+var &i : entero, 
+    &j : decimal, 
+    &x : decimal, 
+    &y : entero;
 
 funcion : entero ~uno(&juan : entero, &pancho : decimal){
   var &k : entero;
-  si(&juan < -&pancho){
+  &k = 1 + 2 - 3 * (3.0 / 4);
+  si(&juan < &pancho){
     imprimir &i;
   } sino {
     imprimir &j;

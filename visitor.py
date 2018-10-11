@@ -62,31 +62,54 @@ class DaxeVisitor(Visitor_Recursive):
         print("9. if poper.top() == rel.op then procede with 4 but different")
 
     def a_g_relacional(self, items):
-        print("8. poper.push(rel.op")
+        print("8. poper.push(rel.op)")
 
     def a_g_exp_1(self, items):
         print("2. poper.push(+ or -)")
+        token = items.children[0].children[0]
+        self.quads.add_operator(token.value)
     
     def a_g_exp_term(self, items):
         print("4. all process with + or -")
+        self.quads.algorithm_with(["-","+"])
 
     def a_g_termino_1(self, items):
         print("3. poper.push(* or /")
+        token = items.children[0].children[0]
+        self.quads.add_operator(token.value)
     
     def a_g_termino_term(self, items):
         print("5. all process with * or /")
+        self.quads.algorithm_with(["*","/"])
     
     def a_g_factor_left_par(self, items):
         print("6. poper.push(false bottom)")
+        print(items.children)
+        self.quads.add_operator("(")
 
     def a_g_factor_right_par(self, items):
         print("7. poper.pop(false bottom)")
+        self.quads.pop_operator()
 
-    def a_g_factor_var(self, items):
+    def a_g_var_cte(self, items):
         print("1. pilao.push(id.name) and ptypes.push(id.type)")
-        print(self.f_table.get_current_vars_table())
-        print(items)
-        print(self.quads)
+        variables=self.f_table.get_current_vars_table()
+        id_name=""
+        type=""
+        if(len(items.children) == 1):
+            if(items.children[0].type == 'T_VAR_ID'):
+                if items.children[0].value in variables:
+                    id_name = items.children[0].value
+                    type = variables[items.children[0].value]["type"]
+                else:
+                    raise Exception("Variable not defined")
+            if(items.children[0].type == 'T_NUM_INT'):
+                id_name = items.children[0].value
+                type = "entero"
+            if(items.children[0].type == 'T_NUM_FLOAT'):
+                id_name = items.children[0].value
+                type = "decimal"
+        self.quads.add_id(id_name, type)
 
     def g_expresion_1(self, items):
         print('@@@')
