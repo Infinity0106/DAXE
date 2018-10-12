@@ -38,7 +38,7 @@ g_dibujar_objetos: T_CUADRADO g_expresion T_COMMA g_expresion T_COMMA g_expresio
 
 g_escritura: T_IMPRIMIR g_expresion a_g_escritura T_PUNTO_COMA
 
-g_ciclo: T_MIENTRAS T_LEFT_PAR g_expresion T_RIGHT_PAR T_LEFT_CRULY_BRAKET [(g_estatutos)*] T_RIGHT_CRULY_BRAKET
+g_ciclo: a_g_ciclo_start T_LEFT_PAR g_expresion a_g_ciclo_mid T_LEFT_CRULY_BRAKET [(g_estatutos)*] a_g_ciclo_end
 
 g_asignacion: a_g_asignacion a_g_asignacion_igual g_expresion a_g_end_asignacion
 
@@ -66,7 +66,7 @@ g_var_cte: a_g_var_cte
          | T_VAR_ID T_LEFT_BRAKET g_expresion T_RIGHT_BRAKET
          | T_FUN_ID T_LEFT_PAR [g_expresion [(T_COMMA g_expresion)*]] T_RIGHT_PAR
 
-g_condicional: T_IF T_LEFT_PAR g_expresion T_RIGHT_PAR g_condicional_1 [T_ELSE g_condicional_1]
+g_condicional: T_IF T_LEFT_PAR g_expresion a_g_condicional_1 g_condicional_1 [a_g_condicional_3 g_condicional_1] a_g_condicional_2
 g_condicional_1: T_LEFT_CRULY_BRAKET [(g_estatutos)*] T_RIGHT_CRULY_BRAKET
 
 // ACTIONS
@@ -102,6 +102,12 @@ a_g_escritura:
 a_g_dibujar_adelante:
 a_g_dibujar_rotar:
 
+a_g_condicional_1: T_RIGHT_PAR
+a_g_condicional_2:
+a_g_condicional_3: T_ELSE
+a_g_ciclo_start: T_MIENTRAS
+a_g_ciclo_mid: T_RIGHT_PAR
+a_g_ciclo_end: T_RIGHT_CRULY_BRAKET
 
 
 // TOKENS

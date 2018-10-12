@@ -98,7 +98,6 @@ class DaxeVisitor(Visitor_Recursive):
         variables=self.f_table.get_current_vars_table()
         id_name=""
         type=""
-        print(items.children)
         if(len(items.children) == 1):
             if(items.children[0].type == 'T_VAR_ID'):
                 if items.children[0].value in variables:
@@ -126,7 +125,7 @@ class DaxeVisitor(Visitor_Recursive):
                     id_name = items.children[0]
                     type = variables[items.children[0].value]["type"]
                 else:
-                    raise Exception("Variable not defined")
+                    raise Exception("Variable not defined %s, at: %s:%s"%(items.children[0].value, items.children[0].line, items.children[0].column))
         self.quads.add_id(id_name, type)
 
     def a_g_asignacion_igual(self, items):
@@ -149,3 +148,47 @@ class DaxeVisitor(Visitor_Recursive):
     def a_g_dibujar_adelante(self, items):
         print("generate quad at the end for forward movement")
         self.quads.gen_custom_quad("MOVF")
+
+    def a_g_condicional_1(self, items):
+        print("""1. exp_type = PTypes.pop()
+                if(exp_type != bool) error
+                else
+                    result = pilao.pop()
+                    generate_quad gotoF, result, None, ____
+                    Pjumps.push(count-1)
+                """)
+        token = items.children[0]
+        self.quads.start_if(token)
+
+    def a_g_condicional_2(self, items):
+        print("end = pjumps.pop(); fill(end, counter)")
+        self.quads.end_if()
+
+    def a_g_condicional_3(self, items):
+        print("""gen GOTO
+                false = pjumps.pop()
+                pjumps.push(count-1)
+                fill(false, count)""")
+        self.quads.else_if()
+
+    def a_g_ciclo_start(self, items):
+        print("pjumps.push(count)")
+        self.quads.while_start()
+
+    def a_g_ciclo_mid(self, items):
+        print("""exp_type=ptypes.pop()
+                if(exp_type != bool) error
+                result = pilao.pop
+                genquad gotof, result, none, none
+                pjumps.push(count-1)
+        """)
+        token = items.children[0]
+        self.quads.while_mid(token)
+
+    def a_g_ciclo_end(self, items):
+        print("""end = pjumps.pop
+                return = pjumps.pop
+                gen goto ,none,none,return
+                fill(end, count)""")
+        self.quads.while_end()
+
