@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 class FunctionsDir:
   def __init__(self):
     self.dir = {}
@@ -29,8 +31,16 @@ class FunctionsDir:
   def create_function_vars(self):
     self.dir[self.current_func]={
       "type": self.current_type,
-      "vars":{}
+      "vars": OrderedDict(),
+      "params": OrderedDict()
     }
+  
+  def create_params_of_function(self):
+    for key in self.dir[self.current_func]["vars"]:
+      self.dir[self.current_func]["params"][key] = self.dir[self.current_func]["vars"][key]
+
+  def define_func_start_point(self, index):
+    self.dir[self.current_func]["start"]=index
 
   def delete_current_var_table(self):
     del self.dir[self.current_func]["vars"]
@@ -46,3 +56,10 @@ class FunctionsDir:
     tmp = self.dir[self.current_func]["vars"].copy()
     tmp.update(self.dir[self.program_key]["vars"])
     return tmp
+
+  def validate_existence(self, key):
+    if key.value not in self.dir:
+      raise Exception("Function %s not defined at %s:%s"%(key.value, key.line, key.column))
+
+  def get_params_of(self, value):
+    return self.dir[value]['params']

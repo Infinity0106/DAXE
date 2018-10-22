@@ -10,11 +10,11 @@ g_nombre_programa: a_t_programa T_COMILLA a_t_id_programa T_COMILLA T_PUNTO_COMA
 g_variables: a_t_var a_t_var_id_y_tipo [T_LEFT_BRAKET T_NUM_INT T_RIGHT_BRAKET] g_variables_1 T_PUNTO_COMA
 g_variables_1: [(T_COMMA a_t_var_id_y_tipo [T_LEFT_BRAKET T_NUM_INT T_RIGHT_BRAKET])*]
 
-g_funciones: a_t_fun T_PUNTO_PUNTO g_funciones_1 a_t_fun_id a_t_fun_l_par [g_funciones_2] T_RIGHT_PAR g_funciones_3
+g_funciones: a_t_fun T_PUNTO_PUNTO g_funciones_1 a_t_fun_id a_t_fun_l_par [g_funciones_2] a_t_fun_r_par g_funciones_3
 g_funciones_1: a_t_var_type
              | a_t_var_void
 g_funciones_2: a_t_var_id_y_tipo [(T_COMMA a_t_var_id_y_tipo)*]
-g_funciones_3: T_LEFT_CRULY_BRAKET g_variables? (g_estatutos)* g_funciones_4 a_t_end_function
+g_funciones_3: T_LEFT_CRULY_BRAKET g_variables? a_g_fun_start_exec (g_estatutos)* g_funciones_4 a_t_end_function
 g_funciones_4: [T_RETURN g_var_cte T_PUNTO_COMA]
 
 g_main: T_DIBUJAR T_LEFT_PAR T_RIGHT_PAR T_LEFT_CRULY_BRAKET [g_variables] (g_estatutos)* a_t_end_program
@@ -29,7 +29,7 @@ g_estatutos: g_condicional
            | g_dibujar_objetos
            | g_asignacion
            | g_escritura
-           | T_FUN_ID T_LEFT_PAR [g_expresion [(T_COMMA g_expresion)*]] T_RIGHT_PAR T_PUNTO_COMA
+           | g_llamada_funcion T_PUNTO_COMA
 
 g_dibujar_objetos: T_CUADRADO g_expresion T_COMMA g_expresion T_COMMA g_expresion T_COMMA T_COLOR T_COMMA T_NUM_INT T_PUNTO_COMA
                  | T_CIRCULO g_expresion T_COMMA g_expresion T_COMMA g_expresion T_COMMA T_COLOR T_COMMA T_NUM_INT T_PUNTO_COMA
@@ -64,10 +64,12 @@ g_factor: a_g_factor_left_par g_expresion a_g_factor_right_par
 
 g_var_cte: a_g_var_cte
          | T_VAR_ID T_LEFT_BRAKET g_expresion T_RIGHT_BRAKET
-         | T_FUN_ID T_LEFT_PAR [g_expresion [(T_COMMA g_expresion)*]] T_RIGHT_PAR
+         | g_llamada_funcion
 
 g_condicional: T_IF T_LEFT_PAR g_expresion a_g_condicional_1 g_condicional_1 [a_g_condicional_3 g_condicional_1] a_g_condicional_2
 g_condicional_1: T_LEFT_CRULY_BRAKET [(g_estatutos)*] T_RIGHT_CRULY_BRAKET
+
+g_llamada_funcion: a_g_funcion_call_start a_g_funcion_era [a_g_funcion_param [(a_g_funcion_params_more a_g_funcion_param)*]] a_g_funcion_verify_params a_g_funcion_end_instance
 
 // ACTIONS
 a_t_programa: T_PROGRAM
@@ -80,8 +82,9 @@ a_t_var_void: T_VOID
 a_t_fun: T_FUN
 a_t_fun_id: T_FUN_ID
 a_t_fun_l_par: T_LEFT_PAR
+a_t_fun_r_par: T_RIGHT_PAR
+a_g_fun_start_exec: 
 a_t_end_function: T_RIGHT_CRULY_BRAKET
-
 
 a_g_end_expresion: 
 a_g_relacional: g_relacional
@@ -109,6 +112,12 @@ a_g_ciclo_start: T_MIENTRAS
 a_g_ciclo_mid: T_RIGHT_PAR
 a_g_ciclo_end: T_RIGHT_CRULY_BRAKET
 
+a_g_funcion_call_start: T_FUN_ID
+a_g_funcion_era: T_LEFT_PAR
+a_g_funcion_param: g_expresion
+a_g_funcion_params_more: T_COMMA
+a_g_funcion_verify_params: T_RIGHT_PAR
+a_g_funcion_end_instance:
 
 // TOKENS
 T_PROGRAM: "programa"i
@@ -175,7 +184,7 @@ programa "prueba";
 var &i : entero, 
     &j : decimal, 
     &x : decimal, 
-    &y : entero;
+    &y : decimal;
 
 funcion : entero ~uno(&juan : entero, &pancho : decimal){
   var &k : decimal;
@@ -211,9 +220,10 @@ dibujar(){
 
   mientras(&i < 10){
     &i = &i + 1;
+    ~dos(&x, 1+2-3/4*4*(4+3/3*&x));
   }
 
-  ~uno(&i, &j);
+  ~uno(&x, &j);
 }
 ''')
 

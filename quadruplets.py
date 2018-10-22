@@ -6,7 +6,7 @@ import pprint
 
 class Quadruplets:
   def __init__(self):
-    self.records=[]
+    self.records=[["GOTO",None,None,None]]
     self.num_aviables=0
     self.operators = Stack() #Poper
     self.types = Stack() #Ptypes
@@ -14,6 +14,12 @@ class Quadruplets:
     self.jumps = Stack() #Pjumps
     self.semantic_cube = SemanticCube()
     self.key_actions = KeyActions().table
+    self.jumps.push(0)
+    self.parameter_count=0
+    self.current_params_table= None
+
+  def current_quad(self):
+    return len(self.records)
 
   def add_id(self, name, type):
     self.types.push(type)
@@ -97,3 +103,26 @@ class Quadruplets:
     self.gen_quad("GOTO", None, None, retornar)
     self.fill_goto(end, len(self.records))
 
+  def gen_era(self, name, params_table):
+    self.gen_quad("ERA", None, None, name)
+    self.parameter_count = 0
+    self.current_params_table = params_table
+
+  def gen_parameter(self):
+    argument = self.operands.pop()
+    argument_type = self.types.pop()
+    try:
+      key, value = self.current_params_table.items()[self.parameter_count]
+    except IndexError:
+      raise Exception("Function not declared with the same parameter size at %s:%s"%(argument.line, argument.column))
+    result_type = self.semantic_cube.cube[argument_type][value["type"]]["="]
+    if result_type == "ERROR":
+      raise Exception("Type mismatch trying to assign (type: %s) to parameter %s (type: %s), at: %s:%s"%(argument_type, argument.value, value['type'], argument.line, argument.column))
+    self.gen_quad("PARAM",argument.value,None,"param"+str(self.parameter_count))
+
+  def more_params(self):
+    self.parameter_count+=1
+
+  def verify_params_len(self, token):
+    if self.parameter_count+1 != len(self.current_params_table):
+      raise Exception("Function not declared with the same parameter size at %s:%s"%(token.line, token.column))

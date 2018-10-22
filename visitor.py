@@ -6,6 +6,7 @@ class DaxeVisitor(Visitor_Recursive):
     def __init__(self):
         self.f_table = None
         self.quads = Quadruplets()
+        self.fun_name = None
 
     def a_t_programa(self, items):
         # print("1.Create DirFunc")
@@ -53,48 +54,57 @@ class DaxeVisitor(Visitor_Recursive):
     def a_t_fun_l_par(self, items):
         # print("10.Create a VarTable and link it to current Func")
         self.f_table.create_function_vars()
+    
+    def a_t_fun_r_par(self, items):
+        # print("4. insert into dirfunc the number of parameters defined")
+        self.f_table.create_params_of_function()
+
+    def a_g_fun_start_exec(self, items):
+        # print("inter into dir func the current quadruple tocunter to determine where the proceadure starts")
+        self.f_table.define_func_start_point(self.quads.current_quad())
 
     def a_t_end_function(self, items):
-        # print("12.Delete current VarTable it's no longer required")
+        print("12.Delete current VarTable it's no longer required")
         self.f_table.delete_current_var_table()
+        self.quads.gen_quad("ENDPROC",None,None,None)
 
     def a_g_end_expresion(self, items):
         print("9. if poper.top() == rel.op then procede with 4 but different")
         self.quads.algorithm_with([">","<","==",">=","<=","<>"])
 
     def a_g_relacional(self, items):
-        print("8. poper.push(rel.op)")
+        # print("8. poper.push(rel.op)")
         token = items.children[0].children[0]
         self.quads.add_operator(token.value)
 
     def a_g_exp_1(self, items):
-        print("2. poper.push(+ or -)")
+        # print("2. poper.push(+ or -)")
         token = items.children[0].children[0]
         self.quads.add_operator(token.value)
     
     def a_g_exp_term(self, items):
-        print("4. all process with + or -")
+        # print("4. all process with + or -")
         self.quads.algorithm_with(["-","+"])
 
     def a_g_termino_1(self, items):
-        print("3. poper.push(* or /")
+        # print("3. poper.push(* or /")
         token = items.children[0].children[0]
         self.quads.add_operator(token.value)
     
     def a_g_termino_term(self, items):
-        print("5. all process with * or /")
+        # print("5. all process with * or /")
         self.quads.algorithm_with(["*","/"])
     
     def a_g_factor_left_par(self, items):
-        print("6. poper.push(false bottom)")
+        # print("6. poper.push(false bottom)")
         self.quads.add_operator("(")
 
     def a_g_factor_right_par(self, items):
-        print("7. poper.pop(false bottom)")
+        # print("7. poper.pop(false bottom)")
         self.quads.pop_operator()
 
     def a_g_var_cte(self, items):
-        print("1. pilao.push(id.name) and ptypes.push(id.type)")
+        # print("1. pilao.push(id.name) and ptypes.push(id.type)")
         variables=self.f_table.get_current_vars_table()
         id_name=""
         type=""
@@ -114,7 +124,7 @@ class DaxeVisitor(Visitor_Recursive):
         self.quads.add_id(id_name, type)
 
     def a_g_asignacion(self, items):
-        print("10. agregar id de la asignacion")
+        # print("10. agregar id de la asignacion")
         #TODO: poder insertar arreglos
         variables=self.f_table.get_current_vars_table()
         id_name=""
@@ -129,66 +139,92 @@ class DaxeVisitor(Visitor_Recursive):
         self.quads.add_id(id_name, type)
 
     def a_g_asignacion_igual(self, items):
-        print("11 agregar = en operadores")
+        # print("11 agregar = en operadores")
         token = items.children[0]
         self.quads.add_operator(token.value)
 
     def a_g_end_asignacion(self, items):
-        print("12 validar si hay un =")
+        # print("12 validar si hay un =")
         self.quads.algorithm_with(["="])
 
     def a_g_escritura(self, items):
-        print("add key of printing")
+        # print("add key of printing")
         self.quads.gen_custom_quad("PRINT")
 
     def a_g_dibujar_rotar(self, items):
-        print("generate quad at the end for rotation movement")
+        # print("generate quad at the end for rotation movement")
         self.quads.gen_custom_quad("ROT")
 
     def a_g_dibujar_adelante(self, items):
-        print("generate quad at the end for forward movement")
+        # print("generate quad at the end for forward movement")
         self.quads.gen_custom_quad("MOVF")
 
     def a_g_condicional_1(self, items):
-        print("""1. exp_type = PTypes.pop()
-                if(exp_type != bool) error
-                else
-                    result = pilao.pop()
-                    generate_quad gotoF, result, None, ____
-                    Pjumps.push(count-1)
-                """)
+        # print("""1. exp_type = PTypes.pop()
+        #         if(exp_type != bool) error
+        #         else
+        #             result = pilao.pop()
+        #             generate_quad gotoF, result, None, ____
+        #             Pjumps.push(count-1)
+        #         """)
         token = items.children[0]
         self.quads.start_if(token)
 
     def a_g_condicional_2(self, items):
-        print("end = pjumps.pop(); fill(end, counter)")
+        # print("end = pjumps.pop(); fill(end, counter)")
         self.quads.end_if()
 
     def a_g_condicional_3(self, items):
-        print("""gen GOTO
-                false = pjumps.pop()
-                pjumps.push(count-1)
-                fill(false, count)""")
+        # print("""gen GOTO
+        #         false = pjumps.pop()
+        #         pjumps.push(count-1)
+        #         fill(false, count)""")
         self.quads.else_if()
 
     def a_g_ciclo_start(self, items):
-        print("pjumps.push(count)")
+        # print("pjumps.push(count)")
         self.quads.while_start()
 
     def a_g_ciclo_mid(self, items):
-        print("""exp_type=ptypes.pop()
-                if(exp_type != bool) error
-                result = pilao.pop
-                genquad gotof, result, none, none
-                pjumps.push(count-1)
-        """)
+        # print("""exp_type=ptypes.pop()
+        #         if(exp_type != bool) error
+        #         result = pilao.pop
+        #         genquad gotof, result, none, none
+        #         pjumps.push(count-1)""")
         token = items.children[0]
         self.quads.while_mid(token)
 
     def a_g_ciclo_end(self, items):
-        print("""end = pjumps.pop
-                return = pjumps.pop
-                gen goto ,none,none,return
-                fill(end, count)""")
+        # print("""end = pjumps.pop
+        #         return = pjumps.pop
+        #         gen goto ,none,none,return
+        #         fill(end, count)""")
         self.quads.while_end()
+
+    def a_g_funcion_call_start(self, items):
+        # print("Verify that the procedure exists in the dirfunc")
+        self.fun_name = items.children[0]
+        self.f_table.validate_existence(self.fun_name)
+
+    def a_g_funcion_era(self, items):
+        print("""generate action era size (activation record expansion new size)
+                start the paramter counter (k) in 1
+                add a pointer to the first paramter type in the paramtertable""")
+        self.quads.gen_era(self.fun_name.value, self.f_table.get_params_of(self.fun_name.value))
+    
+    def a_g_funcion_param(self, items):
+        print("argument = pilao.pop(), argumenttype = ptypes.pop, verify type with paramter, generate parameter argument argument number")
+        self.quads.gen_parameter()
+
+    def a_g_funcion_params_more(self, items):
+        print("k++ move to the next paramter")
+        self.quads.more_params()
+
+    def a_g_funcion_verify_params(self, items):
+        print("verify that the last paramter points to null")
+        self.quads.verify_params_len(items.children[0])
+
+    def a_g_funcion_end_instance(self, items):
+        print("generate action gosub,prodecure_name, none, inital-address")
+        self.quads.gen_quad("GOSUB",None,None,self.fun_name)
 

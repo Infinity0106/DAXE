@@ -17,5 +17,7 @@ class KeyActions:
       "GOTOV":13, #Goto en verdadero
       "PRINT":14, #imprimir en pantall
       "MOVF":15, #dibujar acciones adelante
-      "ROT":16, #dibujar acciones rotar
+      "ROT":16, #dibujar acciones rotar,
+      "PARAM":17,
+      "GOSUB":18
     }
