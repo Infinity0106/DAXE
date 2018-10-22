@@ -17,6 +17,7 @@ class Quadruplets:
     self.jumps.push(0)
     self.parameter_count=0
     self.current_params_table= None
+    self.actual_draw_action = None
 
   def current_quad(self):
     return len(self.records)
@@ -126,3 +127,23 @@ class Quadruplets:
   def verify_params_len(self, token):
     if self.parameter_count+1 != len(self.current_params_table):
       raise Exception("Function not declared with the same parameter size at %s:%s"%(token.line, token.column))
+
+  def draw_era_sub(self, name):
+    self.gen_quad(name, None, None, None)
+    self.parameter_count = 0
+
+  def draw_params(self):
+    argument = self.operands.pop()
+    argument_type = self.types.pop()
+    result_type = self.semantic_cube.cube[argument_type]["decimal"]["="]
+    result_type_2 = self.semantic_cube.cube[argument_type]["entero"]["="]
+    if result_type == "ERROR" and result_type_2 == "ERROR":
+      raise Exception("Type mismatch trying to assign (type: %s) to parameter %s (type: %s), at: %s:%s"%(argument_type, argument.value, "decimal", argument.line, argument.column))
+    self.gen_quad("PARAM",argument.value,None,"param"+str(self.parameter_count))
+
+  def gen_draw_quad(self, value):
+    self.gen_quad("PARAM",value,None,"param"+str(self.parameter_count))
+
+  def fill_main(self):
+    end = self.jumps.pop()
+    self.fill_goto(end, len(self.records))

@@ -19,5 +19,9 @@ class KeyActions:
       "MOVF":15, #dibujar acciones adelante
       "ROT":16, #dibujar acciones rotar,
       "PARAM":17,
-      "GOSUB":18
+      "GOSUB":18,
+      "DCUAD":19,
+      "DCIR":20,
+      "DTRI":21,
+      "DTXT":22
     }

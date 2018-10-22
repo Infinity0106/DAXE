@@ -1,8 +1,0 @@
-*.pyc
-/lark_parser.egg-info/**
-tags
-.vscode
-.ropeproject
-.cache
-/dist
-/build

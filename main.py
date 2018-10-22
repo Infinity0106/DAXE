@@ -1,6 +1,8 @@
 from lark import Lark, tree
 from visitor import DaxeVisitor
 from transformer import DaxeTransformer
+# import turtle
+# import canvasvg
 
 daxe_parser = Lark('''
 g_iniciar_programa: g_nombre_programa g_variables? g_funciones* g_main
@@ -17,7 +19,7 @@ g_funciones_2: a_t_var_id_y_tipo [(T_COMMA a_t_var_id_y_tipo)*]
 g_funciones_3: T_LEFT_CRULY_BRAKET g_variables? a_g_fun_start_exec (g_estatutos)* g_funciones_4 a_t_end_function
 g_funciones_4: [T_RETURN g_var_cte T_PUNTO_COMA]
 
-g_main: T_DIBUJAR T_LEFT_PAR T_RIGHT_PAR T_LEFT_CRULY_BRAKET [g_variables] (g_estatutos)* a_t_end_program
+g_main: a_g_main T_LEFT_PAR T_RIGHT_PAR T_LEFT_CRULY_BRAKET [g_variables] (g_estatutos)* a_t_end_program
 
 g_dibujar_acciones: g_dibujar_acciones_1 T_PUNTO_COMA
 g_dibujar_acciones_1: T_ADELANTE g_expresion a_g_dibujar_adelante
@@ -31,10 +33,10 @@ g_estatutos: g_condicional
            | g_escritura
            | g_llamada_funcion T_PUNTO_COMA
 
-g_dibujar_objetos: T_CUADRADO g_expresion T_COMMA g_expresion T_COMMA g_expresion T_COMMA T_COLOR T_COMMA T_NUM_INT T_PUNTO_COMA
-                 | T_CIRCULO g_expresion T_COMMA g_expresion T_COMMA g_expresion T_COMMA T_COLOR T_COMMA T_NUM_INT T_PUNTO_COMA
-                 | T_TRIANGULO g_expresion T_COMMA g_expresion T_COMMA g_expresion T_COMMA g_expresion T_COMMA T_COLOR T_COMMA T_NUM_INT T_PUNTO_COMA
-                 | T_TEXTO g_expresion T_COMMA g_expresion T_COMMA T_COMILLA T_ID T_COMILLA T_COMMA T_COLOR T_COMMA T_NUM_INT T_PUNTO_COMA
+g_dibujar_objetos: a_g_cuadrado_init a_g_exp_param a_g_draw_p_one a_g_exp_param a_g_draw_p_one a_g_exp_param a_g_draw_p_one a_g_draw_t_color a_g_draw_p_one a_g_draw_stroke a_g_cuadrado_end
+                 | a_g_circulo_init a_g_exp_param a_g_draw_p_one a_g_exp_param a_g_draw_p_one a_g_exp_param a_g_draw_p_one a_g_draw_t_color a_g_draw_p_one a_g_draw_stroke a_g_circulo_end
+                 | a_g_triangulo_init a_g_exp_param a_g_draw_p_one a_g_exp_param a_g_draw_p_one a_g_exp_param a_g_draw_p_one a_g_exp_param a_g_draw_p_one a_g_draw_t_color a_g_draw_p_one a_g_draw_stroke a_g_triangulo_end
+                 | a_g_texto_init a_g_exp_param a_g_draw_p_one a_g_exp_param a_g_draw_p_one a_g_draw_txt_body a_g_draw_p_one a_g_draw_t_color a_g_draw_p_one a_g_draw_stroke a_g_texto_end
 
 g_escritura: T_IMPRIMIR g_expresion a_g_escritura T_PUNTO_COMA
 
@@ -53,14 +55,14 @@ g_relacional: T_MAYOR_QUE
 
 g_exp: g_termino a_g_exp_term [(a_g_exp_1 g_termino a_g_exp_term)*]
 g_exp_1: T_PLUS
-			 | T_MINUS
+       | T_MINUS
        
 g_termino: g_factor a_g_termino_term [(a_g_termino_1 g_factor a_g_termino_term)*]
 g_termino_1: T_MULTIPLICATION
-					 | T_DIVITION
+           | T_DIVITION
 
 g_factor: a_g_factor_left_par g_expresion a_g_factor_right_par
-				| g_var_cte
+        | g_var_cte
 
 g_var_cte: a_g_var_cte
          | T_VAR_ID T_LEFT_BRAKET g_expresion T_RIGHT_BRAKET
@@ -119,10 +121,26 @@ a_g_funcion_params_more: T_COMMA
 a_g_funcion_verify_params: T_RIGHT_PAR
 a_g_funcion_end_instance:
 
+a_g_cuadrado_init: T_CUADRADO
+a_g_cuadrado_end: T_PUNTO_COMA
+a_g_circulo_init: T_CIRCULO
+a_g_circulo_end: T_PUNTO_COMA
+a_g_triangulo_init: T_TRIANGULO
+a_g_triangulo_end: T_PUNTO_COMA
+a_g_texto_init: T_TEXTO
+a_g_texto_end: T_PUNTO_COMA
+a_g_exp_param: g_expresion
+a_g_draw_p_one: T_COMMA
+a_g_draw_t_color: T_COLOR
+a_g_draw_stroke: T_NUM_INT
+a_g_draw_txt_body: T_COMILLA T_ID T_COMILLA
+
+a_g_main: T_DIBUJAR
+
 // TOKENS
 T_PROGRAM: "programa"i
 T_COMILLA: /(\"|\')/
-T_ID: /[A-Za-z]+/
+T_ID: /[A-Za-z0-9!@#$%^&*(),.?:{}|<>]+/
 T_PUNTO_COMA: ";"
 T_VAR: "var"i
 T_VAR_ID: /&[A-Za-z]+/
@@ -130,7 +148,7 @@ T_PUNTO_PUNTO: ":"
 T_VAR_TYPE: /entero|decimal/
 T_LEFT_BRAKET: "["
 T_RIGHT_BRAKET: "]"
-T_NUM_INT: SIGNED_INT
+T_NUM_INT: INT
 T_COMMA: ","
 T_FUN: "funcion"
 T_VOID: "void"
@@ -163,7 +181,7 @@ T_IGUAL_IGUAL_QUE: "=="
 T_MAYOR_IGUAL_QUE: ">="
 T_MENOR_IGUAL_QUE: "<="
 T_DIFERENTE_QUE: "<>"
-T_COLOR: /rgb\((\d+),(\d+),(\d+)\)/
+T_COLOR: /rgb\(\s*(?:(?:\d{1,2}|1\d\d|2(?:[0-4]\d|5[0-5]))\s*,?){3}\)/
 
 
 
@@ -172,6 +190,7 @@ T_NUM_FLOAT: SIGNED_FLOAT
 
 
 %import common.WS
+%import common.INT
 %import common.SIGNED_INT
 %import common.SIGNED_FLOAT
 %import common.LETTER
@@ -213,7 +232,7 @@ dibujar(){
 
   adelante 60;
   rotar &i;
-  cuadrado 5, 6, 19, rgb(10,34,23), 5;
+  cuadrado 5, 6, 19, rgb(10,34,255), 5;
   circulo 0, 0, 10, rgb(10,34,23), 2;
   triangulo &j, 10, ~uno(&x,&y), 5, rgb(10,34,23), 2;
   texto 1, 0, 'juancho', rgb(10,34,23), 24;
@@ -230,8 +249,45 @@ dibujar(){
 # NOTE: if you want to append empty trees with LALR, should be with
 # a transformer then use a visitor
 
-# tree2 = DaxeTransformer().transform(tree_parsed)
+# NOTE: debug to output a image of the tree parsed
 # tree.pydot__tree_to_png(tree_parsed, "__output__.png")
-# tree.pydot__tree_to_png(tree2, "__output2__.png")
+
 
 DaxeVisitor().visit(tree_parsed)
+
+# turtle.hideturtle()
+# turtle.left(20)
+
+# turtle.forward(50)
+# turtle.left(90)
+# turtle.forward(50)
+# turtle.left(90)
+# turtle.forward(50)
+# turtle.left(90)
+# turtle.forward(50)
+# turtle.left(90)
+
+# turtle.left(30)
+
+# turtle.forward(50)
+# turtle.left(90)
+# turtle.forward(50)
+# turtle.left(90)
+# turtle.forward(50)
+# turtle.left(90)
+# turtle.forward(50)
+# turtle.left(90)
+
+# turtle.left(40)
+
+# turtle.forward(50)
+# turtle.left(90)
+# turtle.forward(50)
+# turtle.left(90)
+# turtle.forward(50)
+# turtle.left(90)
+# turtle.forward(50)
+# turtle.left(90)
+# print(turtle.getcanvas())
+# canvasvg.saveall("image.svg", turtle.getcanvas())
+# turtle.exitonclick()

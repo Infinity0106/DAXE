@@ -64,12 +64,12 @@ class DaxeVisitor(Visitor_Recursive):
         self.f_table.define_func_start_point(self.quads.current_quad())
 
     def a_t_end_function(self, items):
-        print("12.Delete current VarTable it's no longer required")
+        # print("12.Delete current VarTable it's no longer required")
         self.f_table.delete_current_var_table()
         self.quads.gen_quad("ENDPROC",None,None,None)
 
     def a_g_end_expresion(self, items):
-        print("9. if poper.top() == rel.op then procede with 4 but different")
+        # print("9. if poper.top() == rel.op then procede with 4 but different")
         self.quads.algorithm_with([">","<","==",">=","<=","<>"])
 
     def a_g_relacional(self, items):
@@ -207,24 +207,82 @@ class DaxeVisitor(Visitor_Recursive):
         self.f_table.validate_existence(self.fun_name)
 
     def a_g_funcion_era(self, items):
-        print("""generate action era size (activation record expansion new size)
-                start the paramter counter (k) in 1
-                add a pointer to the first paramter type in the paramtertable""")
+        # print("""generate action era size (activation record expansion new size)
+        #         start the paramter counter (k) in 1
+        #         add a pointer to the first paramter type in the paramtertable""")
         self.quads.gen_era(self.fun_name.value, self.f_table.get_params_of(self.fun_name.value))
-    
+
     def a_g_funcion_param(self, items):
-        print("argument = pilao.pop(), argumenttype = ptypes.pop, verify type with paramter, generate parameter argument argument number")
+        # print("argument = pilao.pop(), argumenttype = ptypes.pop, verify type with paramter, generate parameter argument argument number")
         self.quads.gen_parameter()
 
     def a_g_funcion_params_more(self, items):
-        print("k++ move to the next paramter")
+        # print("k++ move to the next paramter")
         self.quads.more_params()
 
     def a_g_funcion_verify_params(self, items):
-        print("verify that the last paramter points to null")
+        # print("verify that the last paramter points to null")
         self.quads.verify_params_len(items.children[0])
 
     def a_g_funcion_end_instance(self, items):
-        print("generate action gosub,prodecure_name, none, inital-address")
-        self.quads.gen_quad("GOSUB",None,None,self.fun_name)
+        # print("generate action gosub,prodecure_name, none, inital-address")
+        self.quads.gen_quad("GOSUB",None,None,self.fun_name.value)
 
+    def a_g_cuadrado_init(self, items):
+        # print("init quad for drawing")
+        self.quads.draw_era_sub("SCUAD")
+
+    def a_g_cuadrado_end(self, items):
+        # print("end quad of drawing")
+        self.quads.draw_era_sub("ECUAD")
+
+    def a_g_circulo_init(self, items):
+        # print("init quad for drawing")
+        self.quads.draw_era_sub("SCIR")
+
+    def a_g_circulo_end(self, items):
+        # print("end quad of drawing")
+        self.quads.draw_era_sub("ECIR")
+
+    def a_g_triangulo_init(self, items):
+        # print("init quad for drawing")
+        self.quads.draw_era_sub("STRI")
+    
+    def a_g_triangulo_end(self, items):
+        # print("end quad of drawing")
+        self.quads.draw_era_sub("ETRI")
+    
+    def a_g_texto_init(self, items):
+        # print("init quad for drawing")
+        self.quads.draw_era_sub("STXT")
+    
+    def a_g_texto_end(self, items):
+        # print("end quad of drawing")
+        self.quads.draw_era_sub("ETXT")
+
+    def a_g_exp_param(self, items):
+        # print("generate expression params for drawing")
+        self.quads.draw_params()
+
+    def a_g_draw_p_one(self, items):
+        # print("increment the paramter number")
+        self.quads.more_params()
+
+    def a_g_draw_t_color(self, items):
+        # print("get color of the fill")
+        token = items.children[0]
+        self.quads.gen_draw_quad(token.value)
+
+    def a_g_draw_stroke(self, items):
+        # print("hello")
+        token = items.children[0]
+        self.quads.gen_draw_quad(token.value)
+
+    def a_g_draw_txt_body(self, items):
+        print("hello")
+        token = items.children[1]
+        self.quads.gen_draw_quad(token.value)
+
+    def a_g_main(self, items):
+        print("fill goto main the first quad")
+        self.quads.fill_main()
