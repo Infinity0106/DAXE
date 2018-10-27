@@ -20,8 +20,15 @@ class KeyActions:
       "ROT":16, #dibujar acciones rotar,
       "PARAM":17,
       "GOSUB":18,
-      "DCUAD":19,
-      "DCIR":20,
-      "DTRI":21,
-      "DTXT":22
+      "SCUAD":19,
+      "ECUAD":20,
+      "SCIR":21,
+      "ECIR":22,
+      "STRI":23,
+      "ETRI":24,
+      "STXT":25,
+      "ETXT":26,
+      "ENDPROC":27,
+      "ERA":28,
+      "RETURN":29
     }

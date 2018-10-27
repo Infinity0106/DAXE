@@ -1,8 +1,7 @@
 from lark import Lark, tree
 from visitor import DaxeVisitor
 from transformer import DaxeTransformer
-# import turtle
-# import canvasvg
+import sys
 
 daxe_parser = Lark('''
 g_iniciar_programa: g_nombre_programa g_variables? g_funciones* g_main
@@ -12,12 +11,13 @@ g_nombre_programa: a_t_programa T_COMILLA a_t_id_programa T_COMILLA T_PUNTO_COMA
 g_variables: a_t_var a_t_var_id_y_tipo [T_LEFT_BRAKET T_NUM_INT T_RIGHT_BRAKET] g_variables_1 T_PUNTO_COMA
 g_variables_1: [(T_COMMA a_t_var_id_y_tipo [T_LEFT_BRAKET T_NUM_INT T_RIGHT_BRAKET])*]
 
-g_funciones: a_t_fun T_PUNTO_PUNTO g_funciones_1 a_t_fun_id a_t_fun_l_par [g_funciones_2] a_t_fun_r_par g_funciones_3
-g_funciones_1: a_t_var_type
-             | a_t_var_void
-g_funciones_2: a_t_var_id_y_tipo [(T_COMMA a_t_var_id_y_tipo)*]
-g_funciones_3: T_LEFT_CRULY_BRAKET g_variables? a_g_fun_start_exec (g_estatutos)* g_funciones_4 a_t_end_function
-g_funciones_4: [T_RETURN g_var_cte T_PUNTO_COMA]
+g_funciones: a_t_fun T_PUNTO_PUNTO g_funciones_1
+g_funciones_1: a_t_var_type g_funciones_2 g_funciones_5
+             | a_t_var_void g_funciones_2 g_funciones_4
+g_funciones_2: a_t_fun_id a_t_fun_l_par [g_funciones_3] a_t_fun_r_par
+g_funciones_3: a_t_var_id_y_tipo [(T_COMMA a_t_var_id_y_tipo)*]
+g_funciones_4: T_LEFT_CRULY_BRAKET g_variables? a_g_fun_start_exec (g_estatutos)* a_t_end_function
+g_funciones_5: T_LEFT_CRULY_BRAKET g_variables? a_g_fun_start_exec (g_estatutos)* T_RETURN a_g_return T_PUNTO_COMA a_t_end_function
 
 g_main: a_g_main T_LEFT_PAR T_RIGHT_PAR T_LEFT_CRULY_BRAKET [g_variables] (g_estatutos)* a_t_end_program
 
@@ -66,7 +66,6 @@ g_factor: a_g_factor_left_par g_expresion a_g_factor_right_par
 
 g_var_cte: a_g_var_cte
          | T_VAR_ID T_LEFT_BRAKET g_expresion T_RIGHT_BRAKET
-         | g_llamada_funcion
 
 g_condicional: T_IF T_LEFT_PAR g_expresion a_g_condicional_1 g_condicional_1 [a_g_condicional_3 g_condicional_1] a_g_condicional_2
 g_condicional_1: T_LEFT_CRULY_BRAKET [(g_estatutos)*] T_RIGHT_CRULY_BRAKET
@@ -99,6 +98,7 @@ a_g_factor_right_par: T_RIGHT_PAR
 a_g_var_cte: T_VAR_ID
            | T_NUM_FLOAT
            | T_NUM_INT
+           | g_llamada_funcion
 a_g_asignacion: T_VAR_ID [T_LEFT_BRAKET g_expresion T_RIGHT_BRAKET]
 a_g_asignacion_igual: T_IGUAL
 a_g_end_asignacion: T_PUNTO_COMA
@@ -120,6 +120,7 @@ a_g_funcion_param: g_expresion
 a_g_funcion_params_more: T_COMMA
 a_g_funcion_verify_params: T_RIGHT_PAR
 a_g_funcion_end_instance:
+a_g_return: g_var_cte
 
 a_g_cuadrado_init: T_CUADRADO
 a_g_cuadrado_end: T_PUNTO_COMA
@@ -148,7 +149,7 @@ T_PUNTO_PUNTO: ":"
 T_VAR_TYPE: /entero|decimal/
 T_LEFT_BRAKET: "["
 T_RIGHT_BRAKET: "]"
-T_NUM_INT: INT
+T_NUM_INT: SIGNED_INT
 T_COMMA: ","
 T_FUN: "funcion"
 T_VOID: "void"
@@ -191,6 +192,7 @@ T_NUM_FLOAT: SIGNED_FLOAT
 
 %import common.WS
 %import common.INT
+%import common.FLOAT
 %import common.SIGNED_INT
 %import common.SIGNED_FLOAT
 %import common.LETTER
@@ -198,53 +200,13 @@ T_NUM_FLOAT: SIGNED_FLOAT
 %ignore WS
 ''', start='g_iniciar_programa')
 
-tree_parsed = daxe_parser.parse('''
-programa "prueba";
-var &i : entero, 
-    &j : decimal, 
-    &x : decimal, 
-    &y : decimal;
+try:
+  file_name = sys.argv[1]
+  parse_str = open(file_name, "r")
+except IndexError:
+  raise Exception("No file passed as argument")
 
-funcion : entero ~uno(&juan : entero, &pancho : decimal){
-  var &k : decimal;
-  &k = 1 + 2 - 3 * (3.0 / 4);
-  si(&juan < &pancho){
-    imprimir &i;
-  } sino {
-    imprimir &j;
-  }
-  regresar &k;
-}
-
-funcion : void ~dos(&juan : entero, &pancho : decimal){
-  var &k : entero;
-  imprimir &k;
-  imprimir (1+2-3*(4/3*4.3));
-  si(&juan < &pancho){
-    imprimir &i;
-  } sino {
-    imprimir &j;
-  }
-}
-
-dibujar(){
-  var &h : decimal;
-
-  adelante 60;
-  rotar &i;
-  cuadrado 5, 6, 19, rgb(10,34,255), 5;
-  circulo 0, 0, 10, rgb(10,34,23), 2;
-  triangulo &j, 10, ~uno(&x,&y), 5, rgb(10,34,23), 2;
-  texto 1, 0, 'juancho', rgb(10,34,23), 24;
-
-  mientras(&i < 10){
-    &i = &i + 1;
-    ~dos(&x, 1+2-3/4*4*(4+3/3*&x));
-  }
-
-  ~uno(&x, &j);
-}
-''')
+tree_parsed = daxe_parser.parse(parse_str.read())
 
 # NOTE: if you want to append empty trees with LALR, should be with
 # a transformer then use a visitor

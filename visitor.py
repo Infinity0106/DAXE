@@ -1,6 +1,8 @@
 from lark.visitors import Visitor_Recursive
 from function_dir import FunctionsDir
 from quadruplets import Quadruplets
+from virtual_machine import DaxeVM
+import pprint
 
 class DaxeVisitor(Visitor_Recursive):
     def __init__(self):
@@ -11,6 +13,7 @@ class DaxeVisitor(Visitor_Recursive):
     def a_t_programa(self, items):
         # print("1.Create DirFunc")
         self.f_table = FunctionsDir()
+        self.quads.link_fun_dir(self.f_table)
 
     def a_t_id_programa(self, items):
         # print("2.Add id-name and type program a DirFunc")
@@ -35,11 +38,15 @@ class DaxeVisitor(Visitor_Recursive):
 
     def a_t_end_program(self, items):
         # print("6.Delete DirFunc and current VarTable(Global)")
+        pprint.pprint(self.quads.records)
+        pprint.pprint(self.quads.operators.stack)
+        pprint.pprint(self.quads.operands.stack)
+        DaxeVM(self.quads.records, self.f_table)
         del self.f_table
 
-    def a_t_fun(self, items):
+    # def a_t_fun(self, items):
         #TODO: nothing to prepare
-        print("7.Prepare DirFunc to add new function")
+        # print("7.Prepare DirFunc to add new function")
 
     def a_t_var_void(self, items):
         # print("8.Current-type = void")
@@ -62,11 +69,22 @@ class DaxeVisitor(Visitor_Recursive):
     def a_g_fun_start_exec(self, items):
         # print("inter into dir func the current quadruple tocunter to determine where the proceadure starts")
         self.f_table.define_func_start_point(self.quads.current_quad())
+    
+    def a_g_return(self, items):
+        token = items.children[0].children[0].children[0]
+        fun = self.f_table.get_current_fun_table()
+        type = self.f_table.get_type_of(token.value)
+        if fun['type'] != type:
+            raise Exception("Type missmatch in return (expected: %s) (given: %s) at %s:%s"%(fun['type'], type, token.line, token.column))
+        value = self.quads.token_to_dir(token);
+        self.quads.gen_quad("RETURN", None, None, value)
 
     def a_t_end_function(self, items):
         # print("12.Delete current VarTable it's no longer required")
-        self.f_table.delete_current_var_table()
+        self.f_table.delete_current_var_table(self.quads.num_aviables)
         self.quads.gen_quad("ENDPROC",None,None,None)
+        self.quads.reset_tmp_counter()
+        self.f_table.reset_local_counter()
 
     def a_g_end_expresion(self, items):
         # print("9. if poper.top() == rel.op then procede with 4 but different")
@@ -108,7 +126,7 @@ class DaxeVisitor(Visitor_Recursive):
         variables=self.f_table.get_current_vars_table()
         id_name=""
         type=""
-        if(len(items.children) == 1):
+        if(hasattr(items.children[0],'type')):
             if(items.children[0].type == 'T_VAR_ID'):
                 if items.children[0].value in variables:
                     id_name = items.children[0]
@@ -121,6 +139,9 @@ class DaxeVisitor(Visitor_Recursive):
             if(items.children[0].type == 'T_NUM_FLOAT'):
                 id_name = items.children[0]
                 type = "decimal"
+        else:
+            id_name = items.children[0].children[0].children[0]
+            type = self.f_table.get_fun_table_by_id(id_name.value)['type']
         self.quads.add_id(id_name, type)
 
     def a_g_asignacion(self, items):
@@ -226,7 +247,10 @@ class DaxeVisitor(Visitor_Recursive):
 
     def a_g_funcion_end_instance(self, items):
         # print("generate action gosub,prodecure_name, none, inital-address")
+        fun_table = self.f_table.get_fun_table_by_id(self.fun_name.value)
         self.quads.gen_quad("GOSUB",None,None,self.fun_name.value)
+        if fun_table["type"] != "void":
+            self.quads.gen_return_assign(self.fun_name.value)
 
     def a_g_cuadrado_init(self, items):
         # print("init quad for drawing")
@@ -271,18 +295,19 @@ class DaxeVisitor(Visitor_Recursive):
     def a_g_draw_t_color(self, items):
         # print("get color of the fill")
         token = items.children[0]
-        self.quads.gen_draw_quad(token.value)
+        self.quads.gen_draw_quad(token)
 
     def a_g_draw_stroke(self, items):
         # print("hello")
         token = items.children[0]
-        self.quads.gen_draw_quad(token.value)
+        self.quads.gen_draw_quad(token)
 
     def a_g_draw_txt_body(self, items):
-        print("hello")
+        # print("Add text as a parameter")
         token = items.children[1]
-        self.quads.gen_draw_quad(token.value)
+        self.quads.gen_draw_quad(token)
 
     def a_g_main(self, items):
-        print("fill goto main the first quad")
+        # print("fill goto main the first quad")
+        self.f_table.add_function(items.children[0].value)
         self.quads.fill_main()

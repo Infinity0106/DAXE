@@ -40,7 +40,20 @@ class SemanticCube:
           "<=":"ERROR",
           "<>":"ERROR",
           "=":"ERROR"
-        }
+        },
+        "void":{
+          "+":"ERROR",
+          "-":"ERROR",
+          "*":"ERROR",
+          "/":"ERROR",
+          ">":"ERROR",
+          "<":"ERROR",
+          "==":"ERROR",
+          ">=":"ERROR",
+          "<=":"ERROR",
+          "<>":"ERROR",
+          "=":"ERROR"
+        },
       },
       "decimal":{
         "entero":{
@@ -81,7 +94,20 @@ class SemanticCube:
           "<=":"ERROR",
           "<>":"ERROR",
           "=":"ERROR"
-        }
+        },
+        "void":{
+          "+":"ERROR",
+          "-":"ERROR",
+          "*":"ERROR",
+          "/":"ERROR",
+          ">":"ERROR",
+          "<":"ERROR",
+          "==":"ERROR",
+          ">=":"ERROR",
+          "<=":"ERROR",
+          "<>":"ERROR",
+          "=":"ERROR"
+        },
       },
       "booleano":{
         "entero":{
@@ -122,6 +148,73 @@ class SemanticCube:
           "<=":"booleano",
           "<>":"booleano",
           "=":"booleano"
-        }
+        },
+        "void":{
+          "+":"ERROR",
+          "-":"ERROR",
+          "*":"ERROR",
+          "/":"ERROR",
+          ">":"ERROR",
+          "<":"ERROR",
+          "==":"ERROR",
+          ">=":"ERROR",
+          "<=":"ERROR",
+          "<>":"ERROR",
+          "=":"ERROR"
+        },
+      },
+      "void":{
+        "entero":{
+          "+":"ERROR",
+          "-":"ERROR",
+          "*":"ERROR",
+          "/":"ERROR",
+          ">":"ERROR",
+          "<":"ERROR",
+          "==":"ERROR",
+          ">=":"ERROR",
+          "<=":"ERROR",
+          "<>":"ERROR",
+          "=":"ERROR"
+        },
+        "decimal":{
+          "+":"ERROR",
+          "-":"ERROR",
+          "*":"ERROR",
+          "/":"ERROR",
+          ">":"ERROR",
+          "<":"ERROR",
+          "==":"ERROR",
+          ">=":"ERROR",
+          "<=":"ERROR",
+          "<>":"ERROR",
+          "=":"ERROR"
+        },
+        "booleano":{
+          "+":"ERROR",
+          "-":"ERROR",
+          "*":"ERROR",
+          "/":"ERROR",
+          ">":"ERROR",
+          "<":"ERROR",
+          "==":"ERROR",
+          ">=":"ERROR",
+          "<=":"ERROR",
+          "<>":"ERROR",
+          "=":"ERROR"
+        },
+        "void":{
+          "+":"ERROR",
+          "-":"ERROR",
+          "*":"ERROR",
+          "/":"ERROR",
+          ">":"ERROR",
+          "<":"ERROR",
+          "==":"ERROR",
+          ">=":"ERROR",
+          "<=":"ERROR",
+          "<>":"ERROR",
+          "=":"ERROR"
+        },
       },
     }

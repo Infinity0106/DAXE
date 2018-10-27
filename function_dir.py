@@ -6,6 +6,10 @@ class FunctionsDir:
     self.current_func = None
     self.program_key = None
     self.current_type = None
+    self.loc_int = 8000
+    self.loc_decimal = 9000
+    self.glo_int = 1000
+    self.glo_decimal = 2000
 
   def create_program(self, name, type):
     self.dir[name]={
@@ -42,14 +46,16 @@ class FunctionsDir:
   def define_func_start_point(self, index):
     self.dir[self.current_func]["start"]=index
 
-  def delete_current_var_table(self):
-    del self.dir[self.current_func]["vars"]
+  def delete_current_var_table(self, size):
+    # del self.dir[self.current_func]["vars"]
+    self.dir[self.current_func]['tmp_size'] = size
 
   def add_variable(self, var_name):
     if var_name in self.dir[self.current_func]["vars"] or var_name in self.dir[self.program_key]["vars"]:
       raise Exception("Multiple variable declaration(%s) in function %s"%(var_name, self.current_func))
     self.dir[self.current_func]["vars"][var_name]={
-      "type": self.current_type
+      "type": self.current_type,
+      "dirV": self.get_aviable_dir(self.current_type, self.current_func == self.program_key)
     }
 
   def get_current_vars_table(self):
@@ -63,3 +69,45 @@ class FunctionsDir:
 
   def get_params_of(self, value):
     return self.dir[value]['params']
+
+  def get_current_fun_table(self):
+    return self.dir[self.current_func]
+  
+  def get_fun_table_by_id(self, id):
+    return self.dir[id]
+
+  def get_type_of(self, var_id):
+    tmp = self.dir[self.current_func]["vars"].copy()
+    tmp.update(self.dir[self.program_key]["vars"])
+    return tmp[var_id]["type"]
+
+  def get_dirV_of(self, var_id):
+    tmp = self.dir[self.current_func]["vars"].copy()
+    tmp.update(self.dir[self.program_key]["vars"])
+    return tmp[var_id]["dirV"]
+  
+  def get_aviable_dir(self, type, is_global):
+    value = None
+    if is_global:
+      if type == "entero":
+        value = self.glo_int
+        self.glo_int+=1
+
+      elif type == "decimal":
+        value = self.glo_decimal
+        self.glo_decimal+=1
+
+    else:
+      if type == "entero":
+        value = self.loc_int
+        self.loc_int+=1
+
+      elif type == "decimal":
+        value = self.loc_decimal
+        self.loc_decimal+=1
+
+    return value
+
+  def reset_local_counter(self):
+    self.loc_int = 8000
+    self.loc_decimal = 9000
