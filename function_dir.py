@@ -59,8 +59,11 @@ class FunctionsDir:
     }
 
   def get_current_vars_table(self):
-    tmp = self.dir[self.current_func]["vars"].copy()
-    tmp.update(self.dir[self.program_key]["vars"])
+    if "vars" in self.dir[self.current_func]:
+      tmp = self.dir[self.current_func]["vars"].copy()
+      tmp.update(self.dir[self.program_key]["vars"])
+    else:
+      tmp = self.dir[self.program_key]["vars"]
     return tmp
 
   def validate_existence(self, key):

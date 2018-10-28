@@ -6,19 +6,26 @@ var &i : entero,
 
 funcion : entero ~uno(&juan : entero, &pancho : decimal){
   var &k : decimal;
+
   &k = 1 + 2 - -3 * (-3.0 / 4);
+
   si(&juan < &pancho){
     imprimir &i;
   } sino {
     imprimir &j;
   }
+
   regresar &juan;
 }
 
 funcion : void ~dos(&juan : entero, &pancho : decimal){
   var &k : entero;
+
+  &k = 1283;
+
   imprimir &k;
   imprimir (1+2-3*(4/3*4.3));
+
   si(&juan < &pancho){
     imprimir &i;
   } sino {
@@ -29,16 +36,27 @@ funcion : void ~dos(&juan : entero, &pancho : decimal){
 dibujar(){
   var &h : decimal;
 
+  &i = 120;
+  &j = 50;
+  &x = 4.65;
+  &y = 7.34;
+  &h = 123.23;
+
   adelante 60;
   rotar &i;
-  cuadrado 5, 6, 19, rgb(10,34,255), 5;
-  circulo 0, 0, 10, rgb(10,34,23), 2;
-  triangulo &j, 10, ~uno(&x,&y), 5, rgb(10,34,23), 2;
-  texto 1, 0, 'juancho', rgb(10,34,23), 24;
+  adelante 60;
+  cuadrado 100, 60, 19, rgb(10, 34, 255), 5;
+  circulo -100, -60, 10, rgb(10,34,23), 2;
+  triangulo &j, 10, ~uno(60, 10.9), 5, rgb(10, 34, 255), 2;
+  texto -100, 60, 'juancho', rgb(255,34,23), 24;
+
+  &i = 1;
 
   mientras(&i < 10){
     &i = &i + 1;
+    imprimir &i;
     ~dos(&x, 1+2-3/4*4*(4+3/3*&x));
+    imprimir &i;
   }
 
   &i = ~uno(&x, &j);

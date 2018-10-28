@@ -38,10 +38,10 @@ class DaxeVisitor(Visitor_Recursive):
 
     def a_t_end_program(self, items):
         # print("6.Delete DirFunc and current VarTable(Global)")
-        pprint.pprint(self.quads.records)
-        pprint.pprint(self.quads.operators.stack)
-        pprint.pprint(self.quads.operands.stack)
-        DaxeVM(self.quads.records, self.f_table)
+        # pprint.pprint(self.quads.records)
+        # pprint.pprint(self.quads.operators.stack)
+        # pprint.pprint(self.quads.operands.stack)
+        DaxeVM(self.quads.records, self.f_table, self.quads.memory)
         del self.f_table
 
     # def a_t_fun(self, items):

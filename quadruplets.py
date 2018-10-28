@@ -2,6 +2,7 @@ from custom_stack import Stack
 from semantic_cube import SemanticCube
 from lark import Token
 from key_actions import KeyActions
+from exe_memory import DaxeMEM
 import pprint
 
 class Quadruplets:
@@ -13,6 +14,7 @@ class Quadruplets:
     self.tmp_bool = 12000
     self.cte_int = 5000
     self.cte_decimal = 6000
+    self.cte_string = 7000
     self.glo_tmp_int = 3000
     self.glo_tmp_decimal = 4000
     self.operators = Stack() #Poper
@@ -27,6 +29,7 @@ class Quadruplets:
     self.actual_draw_action = None
     self.fun_dir = None
     self.dir_tmp ={}
+    self.memory = DaxeMEM()
 
   def link_fun_dir(self, fun):
     self.fun_dir = fun
@@ -212,10 +215,12 @@ class Quadruplets:
     if token.type == "T_NUM_INT":
       value = self.cte_int
       self.cte_int+=1
+      self.memory.add(int(token.value), value)
 
     elif token.type == "T_NUM_FLOAT":
       value = self.cte_decimal
       self.cte_decimal+=1
+      self.memory.add(float(token.value), value)
 
     elif token.type == "T_TMP_ID":
       if token.value in self.dir_tmp:
@@ -253,9 +258,13 @@ class Quadruplets:
         self.glo_tmp_decimal+=1
 
     elif token.type == 'T_ID':
-      value = token.value
+      value = self.cte_string
+      self.cte_string+=1
+      self.memory.add(token.value, value)
 
     elif token.type == 'T_COLOR':
-      value = token.value
+      value = self.cte_string
+      self.cte_string+=1
+      self.memory.add(token.value, value)
 
     return value

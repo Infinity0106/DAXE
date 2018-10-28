@@ -182,7 +182,7 @@ T_IGUAL_IGUAL_QUE: "=="
 T_MAYOR_IGUAL_QUE: ">="
 T_MENOR_IGUAL_QUE: "<="
 T_DIFERENTE_QUE: "<>"
-T_COLOR: /rgb\(\s*(?:(?:\d{1,2}|1\d\d|2(?:[0-4]\d|5[0-5]))\s*,?){3}\)/
+T_COLOR: /rgb\(\s*(?:(?:\d{1,2}|1\d\d|2(?:[0-4]\d|5[0-5]))\s*,?\s*){3}\)/
 
 
 

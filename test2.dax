@@ -1,0 +1,36 @@
+programa "prueba";
+var &i : entero, 
+    &j : decimal, 
+    &x : decimal, 
+    &y : decimal;
+
+funcion : entero ~uno(&juan : entero, &pancho : decimal){
+  var &k : decimal;
+  &k = 1 + 2 - -3 * (-3.0 / 4);
+  si(&juan < &pancho){
+    imprimir &i;
+  } sino {
+    imprimir &j;
+  }
+  regresar &juan;
+}
+
+funcion : void ~dos(&juan : entero, &pancho : decimal){
+  imprimir 10;
+  imprimir (1+2-3*(4/3*4.3));
+  si(1 < 2){
+    imprimir 1;
+  } sino {
+    imprimir 3;
+  }
+}
+
+dibujar(){
+  adelante 60;
+  rotar 20;
+  cuadrado 5, 6, 19, rgb(10,34,255), 5;
+  circulo 0, 0, 10, rgb(10,34,23), 2;
+  triangulo 100, 10, 49, 5, rgb(10,34,23), 2;
+  texto 1, 0, 'juancho', rgb(10,34,23), 24;
+  imprimir (1+2-3*(4/3*4.3));
+}
