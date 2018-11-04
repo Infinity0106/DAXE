@@ -37,7 +37,7 @@ class Stack:
     return value
 
   def size(self):
-    return self.len
+    return len(self.stack)
 
   def pop_arg(self):
     #TODO: make it work
