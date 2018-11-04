@@ -6,6 +6,7 @@ class FunctionsDir:
     self.current_func = None
     self.program_key = None
     self.current_type = None
+    self.current_var = None
     self.loc_int = 8000
     self.loc_decimal = 9000
     self.glo_int = 1000
@@ -55,6 +56,7 @@ class FunctionsDir:
   def add_variable(self, var_name):
     if var_name in self.dir[self.current_func]["vars"] or var_name in self.dir[self.program_key]["vars"]:
       raise Exception("Multiple variable declaration(%s) in function %s"%(var_name, self.current_func))
+    self.current_var = var_name
     self.dir[self.current_func]["vars"][var_name]={
       "type": self.current_type,
       "dirV": self.get_aviable_dir(self.current_type, self.current_func == self.program_key)
@@ -116,3 +118,23 @@ class FunctionsDir:
   def reset_local_counter(self):
     self.loc_int = 8000
     self.loc_decimal = 9000
+
+  def current_var_is_array(self):
+    self.dir[self.current_func]["vars"][self.current_var]["dim"]=0
+  
+  def assign_dim(self, size):
+    self.dir[self.current_func]["vars"][self.current_var]["dim"]=size
+  
+  def next_aviable_dir(self):
+    dir = self.dir[self.current_func]["vars"][self.current_var]["dirV"]
+    size = self.dir[self.current_func]["vars"][self.current_var]["dim"] - 1
+
+    if dir >= 8000 and dir <= 8999:
+      self.loc_int += size
+    elif dir >= 9000 and dir <= 9999:
+      self.loc_decimal += size
+    elif dir >= 1000 and dir <= 1999:
+      self.glo_int += size
+    elif dir >= 2000 and dir <= 2999:
+      self.glo_decimal += size
+

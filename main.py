@@ -8,8 +8,8 @@ g_iniciar_programa: g_nombre_programa g_variables? g_funciones* g_main
 
 g_nombre_programa: a_t_programa T_COMILLA a_t_id_programa T_COMILLA T_PUNTO_COMA
 
-g_variables: a_t_var a_t_var_id_y_tipo [T_LEFT_BRAKET T_NUM_INT T_RIGHT_BRAKET] g_variables_1 T_PUNTO_COMA
-g_variables_1: [(T_COMMA a_t_var_id_y_tipo [T_LEFT_BRAKET T_NUM_INT T_RIGHT_BRAKET])*]
+g_variables: a_t_var a_t_var_id_y_tipo [a_g_var_array_left a_g_var_array_size a_g_var_array_right] g_variables_1 T_PUNTO_COMA
+g_variables_1: [(T_COMMA a_t_var_id_y_tipo [a_g_var_array_left a_g_var_array_size a_g_var_array_right])*]
 
 g_funciones: a_t_fun T_PUNTO_PUNTO g_funciones_1
 g_funciones_1: a_t_var_type g_funciones_2 g_funciones_5
@@ -65,7 +65,6 @@ g_factor: a_g_factor_left_par g_expresion a_g_factor_right_par
         | g_var_cte
 
 g_var_cte: a_g_var_cte
-         | T_VAR_ID T_LEFT_BRAKET g_expresion T_RIGHT_BRAKET
 
 g_condicional: T_IF T_LEFT_PAR g_expresion a_g_condicional_1 g_condicional_1 [a_g_condicional_3 g_condicional_1] a_g_condicional_2
 g_condicional_1: T_LEFT_CRULY_BRAKET [(g_estatutos)*] T_RIGHT_CRULY_BRAKET
@@ -95,11 +94,11 @@ a_g_termino_1: g_termino_1
 a_g_termino_term: 
 a_g_factor_left_par: T_LEFT_PAR
 a_g_factor_right_par: T_RIGHT_PAR
-a_g_var_cte: T_VAR_ID
+a_g_var_cte: a_var_id [a_access_array_start a_access_array a_access_array_end]
            | T_NUM_FLOAT
            | T_NUM_INT
            | g_llamada_funcion
-a_g_asignacion: T_VAR_ID [T_LEFT_BRAKET g_expresion T_RIGHT_BRAKET]
+a_g_asignacion: a_var_id [a_access_array_start a_access_array a_access_array_end]
 a_g_asignacion_igual: T_IGUAL
 a_g_end_asignacion: T_PUNTO_COMA
 
@@ -137,6 +136,14 @@ a_g_draw_stroke: T_NUM_INT
 a_g_draw_txt_body: T_COMILLA T_ID T_COMILLA
 
 a_g_main: T_DIBUJAR
+
+a_g_var_array_left:T_LEFT_BRAKET
+a_g_var_array_size: T_NUM_INT
+a_g_var_array_right:T_RIGHT_BRAKET
+a_var_id: T_VAR_ID
+a_access_array_start: T_LEFT_BRAKET
+a_access_array: g_expresion
+a_access_array_end: T_RIGHT_BRAKET
 
 // TOKENS
 T_PROGRAM: "programa"i

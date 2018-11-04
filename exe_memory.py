@@ -1,4 +1,5 @@
 import pprint
+import re
 
 class DaxeMEM:
   def __init__(self):
@@ -18,6 +19,10 @@ class DaxeMEM:
     }
 
   def add(self, value, dir_v):
+    if isinstance(dir_v, str):
+      dir_str = re.findall('\d+|$', dir_v)[0]
+      dir_int = int(dir_str)
+      dir_v = self.get(dir_int)
     key1 = dir_v/1000
     key2 = dir_v%1000
     self.directions[key1][key2] = value
@@ -30,11 +35,12 @@ class DaxeMEM:
     self.directions[keyto1][keyto2] = self.directions[keyfrom1][keyfrom2];
 
   def get(self, dir_v):
+    if isinstance(dir_v, str):
+      dir_str = re.findall('\d+|$', dir_v)[0]
+      dir_int = int(dir_str)
+      dir_v = self.get(dir_int)
     key1 = dir_v/1000
     key2 = dir_v%1000
-    # print(dir_v)
-    # print(key1)
-    # print(key2)
     # pprint.pprint(self.directions)
     # print(self.directions[key1][key2])
     return self.directions[key1][key2]

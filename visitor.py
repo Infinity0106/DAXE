@@ -80,7 +80,7 @@ class DaxeVisitor(Visitor_Recursive):
         elif token.type == "T_NUM_INT":
             type = "entero"
         elif token.type == "T_FUN_ID":
-            type = self.quads.types.top()
+            type = self.quads.types.pop()
             token = self.quads.operands.pop()
         else:
             type = self.f_table.get_type_of(token.value)
@@ -133,16 +133,9 @@ class DaxeVisitor(Visitor_Recursive):
 
     def a_g_var_cte(self, items):
         # print("1. pilao.push(id.name) and ptypes.push(id.type)")
-        variables=self.f_table.get_current_vars_table()
         id_name=""
         type=""
         if(hasattr(items.children[0],'type')):
-            if(items.children[0].type == 'T_VAR_ID'):
-                if items.children[0].value in variables:
-                    id_name = items.children[0]
-                    type = variables[items.children[0].value]["type"]
-                else:
-                    raise Exception("Variable not defined %s, at: %s:%s"%(items.children[0].value, items.children[0].line, items.children[0].column))
             if(items.children[0].type == 'T_NUM_INT'):
                 id_name = items.children[0]
                 type = "entero"
@@ -150,7 +143,7 @@ class DaxeVisitor(Visitor_Recursive):
                 id_name = items.children[0]
                 type = "decimal"
         else:
-            return
+            return None
             # dont have to add a funciton becais we add it at the end_instance action
             # id_name = items.children[0].children[0].children[0]
             # type = self.f_table.get_fun_table_by_id(id_name.value)['type']
@@ -163,13 +156,14 @@ class DaxeVisitor(Visitor_Recursive):
         id_name=""
         type=""
         if(len(items.children) == 1):
-            if(items.children[0].type == 'T_VAR_ID'):
-                if items.children[0].value in variables:
-                    id_name = items.children[0]
-                    type = variables[items.children[0].value]["type"]
+            token = items.children[0].children[0];
+            if(token.type == 'T_VAR_ID'):
+                if token.value in variables:
+                    id_name = token
+                    type = variables[token.value]["type"]
+                    self.quads.add_id(id_name, type)
                 else:
                     raise Exception("Variable not defined %s, at: %s:%s"%(items.children[0].value, items.children[0].line, items.children[0].column))
-        self.quads.add_id(id_name, type)
 
     def a_g_asignacion_igual(self, items):
         # print("11 agregar = en operadores")
@@ -331,3 +325,37 @@ class DaxeVisitor(Visitor_Recursive):
         if hasattr(items, 'children'):
             return self.first_token(items.children[0])
         return items;
+
+    def a_g_var_array_left(self, items):
+        # print("create dimension for array");
+        self.f_table.current_var_is_array();
+
+    def a_g_var_array_size(self, items):
+        # print("create the structure for size (we will only store the size)");
+        size = int(items.children[0].value)
+        self.f_table.assign_dim(size)
+
+    def a_g_var_array_right(self, items):
+        # print("cambira direccion base siguiente");
+        self.f_table.next_aviable_dir()
+
+    def a_var_id(self, items):
+        # print("1. pilao.push(id.name) and ptypes.push(id.type)")
+        variables=self.f_table.get_current_vars_table()
+        if not items.children[0].value in variables:
+            raise Exception("Variable not defined %s, at: %s:%s"%(items.children[0].value, items.children[0].line, items.children[0].column))
+        id_name = items.children[0]
+        type = variables[items.children[0].value]["type"]
+        self.quads.add_id(id_name, type)
+
+    def a_access_array_start(self, items):
+        # print("2 popila , verify is a array, push poper (")
+        self.quads.start_verify_array();
+
+    def a_access_array(self, items):
+        # print("3 generate verificaiton quad")
+        self.quads.verify_array();
+
+    def a_access_array_end(self, items):
+        # print("5 pop operator")
+        self.quads.generate_array_access();

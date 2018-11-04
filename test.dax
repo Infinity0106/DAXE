@@ -2,7 +2,9 @@ programa "prueba";
 var &i : entero, 
     &j : decimal, 
     &x : decimal, 
-    &y : decimal;
+    &y : decimal,
+    &arreglo : entero[10],
+    &berny : entero;
 
 funcion : entero ~factorial(&ii : entero){
   var &tmp : entero;
@@ -57,14 +59,19 @@ funcion : entero ~tres(&juan : entero, &pancho : entero){
   regresar ~uno(&juan, &pancho);
 }
 
+funcion : entero ~cero(){
+  regresar 0;
+}
+
 dibujar(){
-  var &h : decimal;
+  var &h : decimal, &turtle : entero;
 
   &i = 120;
   &j = 50;
   &x = 4.65;
   &y = 7.34;
   &h = 123.23;
+  &turtle = 1;
 
   adelante 60;
   rotar &i;
@@ -83,8 +90,27 @@ dibujar(){
     imprimir &i;
   }
 
+  &arreglo[1] = 9999;
+  imprimir &arreglo[1];
+
+  &berny = &arreglo[1];
+  imprimir &berny;
+  
+  &arreglo[&arreglo[1]-9997] = 2;
+  imprimir &arreglo[2];
+
+  &arreglo[~cero()] = -1;
+  imprimir &arreglo[0];
+
+  mientras(&turtle < 100){
+    adelante 90;
+    rotar 89;
+    adelante 1+&turtle;
+    &turtle = &turtle+1;
+  }
+
   &i = ~uno(&x, &j);
   imprimir &i;
   imprimir ~factorial(6);
-  ~print(1001);
+  ~print(3);
 }

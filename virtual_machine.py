@@ -9,7 +9,7 @@ class DaxeVM:
   def __init__(self, quads, dir_fun, mem):
     # pprint.pprint(dir_fun.dir)
     # pprint.pprint(mem.directions)
-    pprint.pprint(quads)
+    # pprint.pprint(quads)
     self.current_x = 0
     self.current_y = 0
     self.left_op=0
@@ -186,7 +186,6 @@ class DaxeVM:
       
       elif record[0] == "ETXT":
         params = self.params.pop_arg().stack
-        print(params)
         turtle.pu()
         turtle.setx(params[4])
         turtle.sety(params[3])
@@ -194,6 +193,7 @@ class DaxeVM:
         turtle.pd()
         turtle.color(self.regtotup(params[1]))
         turtle.write(params[2],font=("Arial", params[0], "normal"))
+        turtle.color((0,0,0))
       
       elif record[0] == "PARAM":
         val = mem.get(record[1])
@@ -229,10 +229,16 @@ class DaxeVM:
         # elif record2[0] == 'RETURN':
         #   mem.add(value, record2[3])
 
+      elif record[0] == "VERIFY":
+        value = mem.get(record[1])
+        if not (value >= record[2] and value <= record[3]):
+          raise Exception("Array index out of bounds")
+
       else:
         raise Exception("Unrecognized action %s"%(record[0]))
       i+=1
 
+    canvasvg.warnings(canvasvg.NONE)
     canvasvg.saveall("image.svg", turtle.getcanvas())
     turtle.done()
 

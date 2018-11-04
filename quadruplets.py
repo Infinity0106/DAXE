@@ -30,6 +30,7 @@ class Quadruplets:
     self.fun_dir = None
     self.dir_tmp ={}
     self.memory = DaxeMEM()
+    self.curren_arr = None
 
   def link_fun_dir(self, fun):
     self.fun_dir = fun
@@ -158,7 +159,7 @@ class Quadruplets:
 
   def verify_params_len(self, token):
     actual = self.parameter_count.top()
-    if actual+1 != len(self.current_params_table):
+    if not (actual == 0 and len(self.current_params_table) == 0) and actual+1 != len(self.current_params_table):
       raise Exception("Function not declared with the same parameter size at %s:%s"%(token.line, token.column))
     self.parameter_count.pop()
 
@@ -281,5 +282,45 @@ class Quadruplets:
       value = self.cte_string
       self.cte_string+=1
       self.memory.add(token.value, value)
+    
+    elif token.type == 'T_TMP_DIR':
+      value = token.value
 
     return value
+
+  def start_verify_array(self):
+    id = self.operands.pop()
+    type = self.types.pop()
+    var_table = self.fun_dir.get_current_vars_table()
+    if not "dim" in var_table[id]:
+      raise Exception("Variable (%s) is not an array at %s:%s"%(id.value, id.line, id.column))
+    self.curren_arr = var_table[id];
+    self.add_operator("(")
+
+  def verify_array(self):
+    tmp = self.operands.top()
+    left = self.token_to_dir(tmp)
+    self.gen_quad("VERIFY", left, 0, self.curren_arr["dim"])
+
+  def generate_array_access(self):
+    aux = self.operands.pop()
+    aux_type = self.types.pop()
+
+    if aux_type != "entero":
+      raise Exception("Index of array (%s) is not int at %s:%s"%(aux.value, aux.line, aux.column))
+
+    base = self.curren_arr["dirV"]
+
+    self.num_aviables+=1
+    result_name = Token("T_TMP_ID", 'tmp_'+str(aux_type)+'_'+str(self.num_aviables))
+    base_name = Token("T_NUM_INT", str(base))
+
+    left = self.token_to_dir(aux)
+    result = self.token_to_dir(result_name)
+    dir_base = self.token_to_dir(base_name)
+    self.gen_quad("+", left, dir_base, result)
+
+    tmp_token = Token("T_TMP_DIR", '('+str(result)+')')
+    self.operands.push(tmp_token)
+    self.types.push(aux_type)
+    self.operators.pop()
