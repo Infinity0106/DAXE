@@ -174,7 +174,7 @@ class DaxeVM:
         alfa = math.atan2(params[2], params[3]/2.0) # To compute alfa
         alfa = math.degrees(alfa)
         alfa = 180.0 - alfa
-        turtle.forward(params[2])
+        turtle.forward(params[3])
         turtle.left(alfa)
         turtle.forward(l)
         turtle.left(2*(180-alfa))
@@ -193,7 +193,7 @@ class DaxeVM:
         turtle.seth(0)
         turtle.pd()
         turtle.color(self.regtotup(params[1]))
-        turtle.write(params[3],font=("Arial", params[0], "normal"))
+        turtle.write(params[2],font=("Arial", params[0], "normal"))
       
       elif record[0] == "PARAM":
         val = mem.get(record[1])
