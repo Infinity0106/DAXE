@@ -120,7 +120,7 @@ a_g_funcion_param: g_expresion
 a_g_funcion_params_more: T_COMMA
 a_g_funcion_verify_params: T_RIGHT_PAR
 a_g_funcion_end_instance:
-a_g_return: g_var_cte
+a_g_return: g_expresion
 
 a_g_cuadrado_init: T_CUADRADO
 a_g_cuadrado_end: T_PUNTO_COMA
@@ -196,8 +196,13 @@ T_NUM_FLOAT: SIGNED_FLOAT
 %import common.SIGNED_INT
 %import common.SIGNED_FLOAT
 %import common.LETTER
+%import common.NEWLINE
+
+COMMENT: "//" /(.)+/ NEWLINE
+       | "(*" /(.|\\n|\\r)+/ "*)"
 
 %ignore WS
+%ignore COMMENT
 ''', start='g_iniciar_programa')
 
 try:
@@ -216,40 +221,3 @@ tree_parsed = daxe_parser.parse(parse_str.read())
 
 
 DaxeVisitor().visit(tree_parsed)
-
-# turtle.hideturtle()
-# turtle.left(20)
-
-# turtle.forward(50)
-# turtle.left(90)
-# turtle.forward(50)
-# turtle.left(90)
-# turtle.forward(50)
-# turtle.left(90)
-# turtle.forward(50)
-# turtle.left(90)
-
-# turtle.left(30)
-
-# turtle.forward(50)
-# turtle.left(90)
-# turtle.forward(50)
-# turtle.left(90)
-# turtle.forward(50)
-# turtle.left(90)
-# turtle.forward(50)
-# turtle.left(90)
-
-# turtle.left(40)
-
-# turtle.forward(50)
-# turtle.left(90)
-# turtle.forward(50)
-# turtle.left(90)
-# turtle.forward(50)
-# turtle.left(90)
-# turtle.forward(50)
-# turtle.left(90)
-# print(turtle.getcanvas())
-# canvasvg.saveall("image.svg", turtle.getcanvas())
-# turtle.exitonclick()

@@ -4,10 +4,30 @@ var &i : entero,
     &x : decimal, 
     &y : decimal;
 
-funcion : entero ~uno(&juan : entero, &pancho : decimal){
+funcion : entero ~factorial(&ii : entero){
+  var &tmp : entero;
+
+  si(&ii >= 1){
+    &tmp = &ii*~factorial(&ii-1);
+  }sino{
+    &tmp = 1;
+  }
+
+  regresar &tmp;
+}
+
+funcion : void ~print(&t : entero){
+  si(&t>=1){
+    imprimir &t;
+    ~print(&t-1);
+    imprimir &t;
+  }
+}
+
+funcion : entero ~uno(&juan : entero, &pancho : entero){
   var &k : decimal;
 
-  &k = 1 + 2 - -3 * (-3.0 / 4);
+  &k = 1 + 2 - -3 * (-3.0 - 4 + 5);
 
   si(&juan < &pancho){
     imprimir &i;
@@ -15,7 +35,7 @@ funcion : entero ~uno(&juan : entero, &pancho : decimal){
     imprimir &j;
   }
 
-  regresar &juan;
+  regresar &i;
 }
 
 funcion : void ~dos(&juan : entero, &pancho : decimal){
@@ -23,14 +43,18 @@ funcion : void ~dos(&juan : entero, &pancho : decimal){
 
   &k = 1283;
 
-  imprimir &k;
-  imprimir (1+2-3*(4/3*4.3));
+  // imprimir &k;
+  // imprimir (1+2-3*(4/3*4.3));
 
   si(&juan < &pancho){
     imprimir &i;
   } sino {
     imprimir &j;
   }
+}
+
+funcion : entero ~tres(&juan : entero, &pancho : entero){
+  regresar ~uno(&juan, &pancho);
 }
 
 dibujar(){
@@ -47,7 +71,7 @@ dibujar(){
   adelante 60;
   cuadrado 100, 60, 19, rgb(10, 34, 255), 5;
   circulo -100, -60, 10, rgb(10,34,23), 2;
-  triangulo &j, 10, ~uno(60, 10.9), 5, rgb(10, 34, 255), 2;
+  triangulo &j, 10, ~uno(60, ~tres(1,-3)), 300, rgb(10, 34, 255), 2;
   texto -100, 60, 'juancho', rgb(255,34,23), 24;
 
   &i = 1;
@@ -60,4 +84,7 @@ dibujar(){
   }
 
   &i = ~uno(&x, &j);
+  imprimir &i;
+  imprimir ~factorial(6);
+  ~print(6);
 }

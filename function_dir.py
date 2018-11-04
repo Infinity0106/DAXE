@@ -38,6 +38,8 @@ class FunctionsDir:
       "vars": OrderedDict(),
       "params": OrderedDict()
     }
+    if self.current_type != "void":
+      self.dir[self.current_func]["return"]=self.get_aviable_dir(self.current_type, True)
   
   def create_params_of_function(self):
     for key in self.dir[self.current_func]["vars"]:

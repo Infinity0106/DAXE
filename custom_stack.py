@@ -4,39 +4,30 @@ class Stack:
   def __init__(self):
     self.stack = []
     self.len = 0
+    # self.has_instance=False
 
   def __str__(self):
-    txt = "["
+    txt="["
     for value in self.stack:
-      if hasattr(value, 'stack'):
-        txt += "["
-        txt += value.__str__()
-        txt += "]"
-      else:
+      # if hasattr(value, 'stack'):
+      #   # txt += "["
+      #   txt += value.__str__()
+      #   # txt += "]"
+      # else:
         txt += str(value)
         txt+=", "
-    txt+=']'
+    txt+="]"
     return txt
 
   def push(self, item):
-    if isinstance(item, Stack):
-      self.len-=1
-    if hasattr(self.top(), 'stack'):
-      self.top().push(item)
-    else:
+    # if hasattr(self.top(), 'stack'):
+    #   self.has_instance=True
+    #   self.top().push(item)
+    # else:
       self.stack.append(item)
-    self.len+=1
 
-  def pop(self, parent=False):
-    print('@@@')
-    print(self.top())
-    print('@@@')
-    if parent and hasattr(self.top(), 'stack'):
-      self.len -= len(self.top().stack)
-      return self.top().pop()
-    else:
-      self.len-=1
-      return self.stack.pop()
+  def pop(self):
+    return self.stack.pop()
 
   def top(self):
     if(len(self.stack) == 0):
@@ -47,3 +38,24 @@ class Stack:
 
   def size(self):
     return self.len
+
+  def pop_arg(self):
+    #TODO: make it work
+    tmp = Stack()
+    for i in reversed(self.stack):
+      if i != "(":
+        tmp.push(self.pop())
+      else:
+        self.pop();
+        break
+    return tmp;
+
+  def top_arg(self):
+    #TODO: make it work
+    tmp = Stack()
+    for i in reversed(self.stack):
+      if i != "(":
+        tmp.push(self.top())
+      else:
+        break
+    return tmp;

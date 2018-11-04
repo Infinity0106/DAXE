@@ -2,13 +2,14 @@ from lark.visitors import Visitor_Recursive
 from function_dir import FunctionsDir
 from quadruplets import Quadruplets
 from virtual_machine import DaxeVM
+from custom_stack import Stack
 import pprint
 
 class DaxeVisitor(Visitor_Recursive):
     def __init__(self):
         self.f_table = None
         self.quads = Quadruplets()
-        self.fun_name = None
+        self.fun_name = Stack()
 
     def a_t_programa(self, items):
         # print("1.Create DirFunc")
@@ -71,9 +72,18 @@ class DaxeVisitor(Visitor_Recursive):
         self.f_table.define_func_start_point(self.quads.current_quad())
     
     def a_g_return(self, items):
-        token = items.children[0].children[0].children[0]
+        token = self.first_token(items)
         fun = self.f_table.get_current_fun_table()
-        type = self.f_table.get_type_of(token.value)
+        type = None
+        if token.type == "T_NUM_FLOAT":
+            type = "decimal"
+        elif token.type == "T_NUM_INT":
+            type = "entero"
+        elif token.type == "T_FUN_ID":
+            type = self.quads.types.top()
+            token = self.quads.operands.pop()
+        else:
+            type = self.f_table.get_type_of(token.value)
         if fun['type'] != type:
             raise Exception("Type missmatch in return (expected: %s) (given: %s) at %s:%s"%(fun['type'], type, token.line, token.column))
         value = self.quads.token_to_dir(token);
@@ -140,8 +150,10 @@ class DaxeVisitor(Visitor_Recursive):
                 id_name = items.children[0]
                 type = "decimal"
         else:
-            id_name = items.children[0].children[0].children[0]
-            type = self.f_table.get_fun_table_by_id(id_name.value)['type']
+            return
+            # dont have to add a funciton becais we add it at the end_instance action
+            # id_name = items.children[0].children[0].children[0]
+            # type = self.f_table.get_fun_table_by_id(id_name.value)['type']
         self.quads.add_id(id_name, type)
 
     def a_g_asignacion(self, items):
@@ -224,14 +236,15 @@ class DaxeVisitor(Visitor_Recursive):
 
     def a_g_funcion_call_start(self, items):
         # print("Verify that the procedure exists in the dirfunc")
-        self.fun_name = items.children[0]
-        self.f_table.validate_existence(self.fun_name)
+        self.quads.add_operator("(")
+        self.fun_name.push(items.children[0])
+        self.f_table.validate_existence(self.fun_name.top())
 
     def a_g_funcion_era(self, items):
         # print("""generate action era size (activation record expansion new size)
         #         start the paramter counter (k) in 1
         #         add a pointer to the first paramter type in the paramtertable""")
-        self.quads.gen_era(self.fun_name.value, self.f_table.get_params_of(self.fun_name.value))
+        self.quads.gen_era(self.fun_name.top().value, self.f_table.get_params_of(self.fun_name.top().value))
 
     def a_g_funcion_param(self, items):
         # print("argument = pilao.pop(), argumenttype = ptypes.pop, verify type with paramter, generate parameter argument argument number")
@@ -247,10 +260,12 @@ class DaxeVisitor(Visitor_Recursive):
 
     def a_g_funcion_end_instance(self, items):
         # print("generate action gosub,prodecure_name, none, inital-address")
-        fun_table = self.f_table.get_fun_table_by_id(self.fun_name.value)
-        self.quads.gen_quad("GOSUB",None,None,self.fun_name.value)
+        tmp_fun_name = self.fun_name.pop()
+        fun_table = self.f_table.get_fun_table_by_id(tmp_fun_name.value)
+        self.quads.gen_quad("GOSUB",None,None,tmp_fun_name.value)
         if fun_table["type"] != "void":
-            self.quads.gen_return_assign(self.fun_name.value)
+            self.quads.gen_return_assign(tmp_fun_name.value, fun_table["return"], fun_table["type"])
+        self.quads.pop_operator()
 
     def a_g_cuadrado_init(self, items):
         # print("init quad for drawing")
@@ -311,3 +326,8 @@ class DaxeVisitor(Visitor_Recursive):
         # print("fill goto main the first quad")
         self.f_table.add_function(items.children[0].value)
         self.quads.fill_main()
+
+    def first_token(self, items):
+        if hasattr(items, 'children'):
+            return self.first_token(items.children[0])
+        return items;

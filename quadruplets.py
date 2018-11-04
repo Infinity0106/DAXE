@@ -94,6 +94,7 @@ class Quadruplets:
 
   def gen_custom_quad(self, type):
     result_name = self.operands.pop()
+    result_type = self.types.pop()
     result = self.token_to_dir(result_name)
     self.gen_quad(type, None, None, result)
 
@@ -188,7 +189,7 @@ class Quadruplets:
     end = self.jumps.pop()
     self.fill_goto(end, len(self.records))
 
-  def gen_return_assign(self, name):
+  def gen_return_assign(self, name, dir, type):
     # pprint.pprint(self.operands.stack)
     # pprint.pprint(self.operators.stack)
     # self.num_aviables+=1
@@ -202,8 +203,14 @@ class Quadruplets:
     #     if operator != "=":
     #       self.operands.push(result_name)
     #       self.types.push(result_type)
-    print("todo")
-  
+    self.num_aviables+=1
+    result_name = Token("T_TMP_ID", 'tmp_'+str(type)+'_'+str(self.num_aviables))
+    result = self.token_to_dir(result_name)
+    self.gen_quad("=", result, dir, None)
+    # self.gen_quad("=", result_name.value, dir, None)
+    self.operands.push(result_name)
+    self.types.push(type)
+
   def reset_tmp_counter(self):
     self.num_aviables = 0;
     self.tmp_bool = 12000
@@ -213,14 +220,22 @@ class Quadruplets:
   def token_to_dir(self, token, look_in = None):
     value = None
     if token.type == "T_NUM_INT":
-      value = self.cte_int
-      self.cte_int+=1
-      self.memory.add(int(token.value), value)
+      tmp = self.memory.search(int(token.value), 5)
+      if tmp == None:
+        value = self.cte_int
+        self.cte_int+=1
+        self.memory.add(int(token.value), value)
+      else:
+        value=tmp
 
     elif token.type == "T_NUM_FLOAT":
-      value = self.cte_decimal
-      self.cte_decimal+=1
-      self.memory.add(float(token.value), value)
+      tmp = self.memory.search(float(token.value), 6)
+      if tmp == None:
+        value = self.cte_decimal
+        self.cte_decimal+=1
+        self.memory.add(float(token.value), value)
+      else:
+        value = tmp
 
     elif token.type == "T_TMP_ID":
       if token.value in self.dir_tmp:
