@@ -1,4 +1,4 @@
-('/Users/infinity0106/Documents/TEC Ago-Dic 2018/Compiladores/daxe/dist/main',
+('/Users/infinity0106/Documents/TEC Ago-Dic 2018/Compiladores/daxe/dist/daxe',
  True,
  False,
  False,
@@ -8,7 +8,7 @@
  False,
  None,
  True,
- 'main.pkg',
+ 'daxe.pkg',
  [('PYZ-00.pyz',
    '/Users/infinity0106/Documents/TEC Ago-Dic 2018/Compiladores/daxe/build/main/PYZ-00.pyz',
    'PYZ'),
@@ -1196,7 +1196,7 @@
  [],
  False,
  False,
- 1541363405,
+ 1541363799,
  [('run',
    '/usr/local/lib/python2.7/site-packages/PyInstaller/bootloader/Darwin-64bit/run',
    'EXECUTABLE')])
