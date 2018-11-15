@@ -35,7 +35,7 @@ class DaxeMEM:
       keyto2 = dir_to%1000
       self.directions[keyto1][keyto2] = self.directions[keyfrom1][keyfrom2];
     except KeyError:
-      raise Exception("Uninitialized variable")
+      raise Exception("Variable no inicializada")
 
   def get(self, dir_v):
     try:
@@ -49,7 +49,7 @@ class DaxeMEM:
       # print(self.directions[key1][key2])
       return self.directions[key1][key2]
     except KeyError:
-      raise Exception("Uninitialized variable")
+      raise Exception("Variable no inicializada")
 
   def search(self, value, dir):
     # pprint.pprint(self.directions)

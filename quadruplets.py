@@ -58,7 +58,7 @@ class Quadruplets:
       operator = self.operators.pop()
       result_type = self.semantic_cube.cube[left_type][right_type][operator]
       if result_type == "ERROR":
-        raise Exception("Type mismatch trying to assign (type: %s) to %s (type: %s), at: %s:%s"%(right_type, left_operand, left_type, left_operand.line, left_operand.column))
+        raise Exception("Tipos no coinciden en la asignaci\xc3\xb3n (tipos: %s) a %s (tipos: %s), en: %s:%s"%(right_type, left_operand, left_type, left_operand.line, left_operand.column))
       else:
         self.num_aviables+=1
         result_name = Token("T_TMP_ID", 'tmp_'+str(result_type)+'_'+str(self.num_aviables))
@@ -75,7 +75,7 @@ class Quadruplets:
   def start_if(self, token):
     exp_type = self.types.pop()
     if exp_type != "booleano":
-      raise Exception("Type mismatch trying to evaluate si at %s:%s"%(token.line,token.column))
+      raise Exception("Tipos no coinciden tratando de evaluar si en %s:%s"%(token.line,token.column))
     result = self.operands.pop()
     value = self.token_to_dir(result)
     self.gen_quad("GOTOF", value, None, None)
@@ -120,7 +120,7 @@ class Quadruplets:
   def while_mid(self, token):
     exp_type = self.types.pop()
     if exp_type != "booleano":
-      raise Exception("Type mismatch trying to evaluate si at %s:%s"%(token.line,token.column))
+      raise Exception("Tipos no coinciden tratando de evaluar si en %s:%s"%(token.line,token.column))
     result = self.operands.pop()
     value = self.token_to_dir(result)
     self.gen_quad("GOTOF", value, None, None)
@@ -145,10 +145,10 @@ class Quadruplets:
       current_num = self.parameter_count.top()
       key, value = self.current_params_table.items()[current_num]
     except IndexError:
-      raise Exception("Function not declared with the same parameter size at %s:%s"%(argument.line, argument.column))
+      raise Exception("Funci\xc3\xb3n no declarada con el mismo tama\xc3\xb1o de par\xc3\xa1metros en %s:%s"%(argument.line, argument.column))
     result_type = self.semantic_cube.cube[argument_type][value["type"]]["="]
     if result_type == "ERROR":
-      raise Exception("Type mismatch trying to assign (type: %s) to parameter %s (type: %s), at: %s:%s"%(argument_type, argument.value, value['type'], argument.line, argument.column))
+      raise Exception("Tipos no coinciden en la asignaci\xc3\xb3n (tipo: %s) al par\xc3\xa1metro %s (tipo: %s), en: %s:%s"%(argument_type, argument.value, value['type'], argument.line, argument.column))
     value = self.token_to_dir(argument)
     self.gen_quad("PARAM",value,None,"param"+str(current_num))
 
@@ -160,7 +160,7 @@ class Quadruplets:
   def verify_params_len(self, token):
     actual = self.parameter_count.top()
     if not (actual == 0 and len(self.current_params_table) == 0) and actual+1 != len(self.current_params_table):
-      raise Exception("Function not declared with the same parameter size at %s:%s"%(token.line, token.column))
+      raise Exception("Funci\xc3\xb3n no declarada con el mismo tama\xc3\xb1o de par\xc3\xa1metros en %s:%s"%(token.line, token.column))
     self.parameter_count.pop()
 
   def draw_era_sub(self, name):
@@ -173,7 +173,7 @@ class Quadruplets:
     result_type = self.semantic_cube.cube[argument_type]["decimal"]["="]
     result_type_2 = self.semantic_cube.cube[argument_type]["entero"]["="]
     if result_type == "ERROR" and result_type_2 == "ERROR":
-      raise Exception("Type mismatch trying to assign (type: %s) to parameter %s (type: %s), at: %s:%s"%(argument_type, argument.value, "decimal", argument.line, argument.column))
+      raise Exception("Tipos no coinciden en la asignaci\xc3\xb3n (tipo: %s) al par\xc3\xa1metro %s (tipo: %s), en: %s:%s"%(argument_type, argument.value, "decimal", argument.line, argument.column))
     actual = self.parameter_count.top()
     value = self.token_to_dir(argument)
     self.gen_quad("PARAM",value,None,"param"+str(actual))
@@ -293,7 +293,7 @@ class Quadruplets:
     type = self.types.pop()
     var_table = self.fun_dir.get_current_vars_table()
     if not "dim" in var_table[id]:
-      raise Exception("Variable (%s) is not an array at %s:%s"%(id.value, id.line, id.column))
+      raise Exception("Variable (%s) no es un arreglo en %s:%s"%(id.value, id.line, id.column))
     self.curren_arr = var_table[id];
     self.add_operator("(")
 
@@ -307,7 +307,7 @@ class Quadruplets:
     aux_type = self.types.pop()
 
     if aux_type != "entero":
-      raise Exception("Index of array (%s) is not int at %s:%s"%(aux.value, aux.line, aux.column))
+      raise Exception("El \xc3\xadndice del arreglo (%s) no es un entero en %s:%s"%(aux.value, aux.line, aux.column))
 
     base = self.curren_arr["dirV"]
 

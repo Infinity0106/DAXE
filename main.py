@@ -33,6 +33,7 @@ g_estatutos: g_condicional
            | g_dibujar_objetos
            | g_asignacion
            | g_escritura
+           | g_lectura
            | g_llamada_funcion T_PUNTO_COMA
 
 g_dibujar_objetos: a_g_cuadrado_init a_g_exp_param a_g_draw_p_one a_g_exp_param a_g_draw_p_one a_g_exp_param a_g_draw_p_one a_g_draw_t_color a_g_draw_p_one a_g_draw_stroke a_g_cuadrado_end
@@ -41,6 +42,8 @@ g_dibujar_objetos: a_g_cuadrado_init a_g_exp_param a_g_draw_p_one a_g_exp_param 
                  | a_g_texto_init a_g_exp_param a_g_draw_p_one a_g_exp_param a_g_draw_p_one a_g_draw_txt_body a_g_draw_p_one a_g_draw_t_color a_g_draw_p_one a_g_draw_stroke a_g_texto_end
 
 g_escritura: T_IMPRIMIR g_expresion a_g_escritura T_PUNTO_COMA
+
+g_lectura: T_LEER a_var_id [a_access_array_start a_access_array a_access_array_end] a_g_lectura T_PUNTO_COMA
 
 g_ciclo: a_g_ciclo_start T_LEFT_PAR g_expresion a_g_ciclo_mid T_LEFT_CRULY_BRAKET [(g_estatutos)*] a_g_ciclo_end
 
@@ -105,6 +108,7 @@ a_g_asignacion_igual: T_IGUAL
 a_g_end_asignacion: T_PUNTO_COMA
 
 a_g_escritura:
+a_g_lectura:
 a_g_dibujar_adelante:
 a_g_dibujar_rotar:
 
@@ -185,6 +189,7 @@ T_MULTIPLICATION: "*"
 T_IF: "si"
 T_ELSE: "sino"
 T_IMPRIMIR: "imprimir"
+T_LEER: "leer"
 T_MAYOR_QUE: ">"
 T_MENOR_QUE: "<"
 T_IGUAL_IGUAL_QUE: "=="
@@ -218,7 +223,7 @@ try:
   file_name = sys.argv[1]
   parse_str = open(file_name, "r")
 except IndexError:
-  raise Exception("No file passed as argument")
+  raise Exception("No proporcionaste archivo de entrada")
 
 tree_parsed = daxe_parser.parse(parse_str.read())
 

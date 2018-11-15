@@ -29,7 +29,7 @@ class FunctionsDir:
 
   def add_function(self, name):
     if name in self.dir:
-      raise Exception("Multiple function declaration with the same name %s"%(name))
+      raise Exception("Declaraci\xc3\xb3n m\xc3\xbaltiple de funciones con el mismo nombre %s"%(name))
     self.dir[name]={}
     self.current_func=name
 
@@ -55,7 +55,7 @@ class FunctionsDir:
 
   def add_variable(self, var_name):
     if var_name in self.dir[self.current_func]["vars"] or var_name in self.dir[self.program_key]["vars"]:
-      raise Exception("Multiple variable declaration(%s) in function %s"%(var_name, self.current_func))
+      raise Exception("Declaraci\xc3\xb3n m\xc3\xbaltiple de variable(%s) en la funci\xc3\xb3n(%s)"%(var_name, self.current_func))
     self.current_var = var_name
     self.dir[self.current_func]["vars"][var_name]={
       "type": self.current_type,
@@ -72,7 +72,7 @@ class FunctionsDir:
 
   def validate_existence(self, key):
     if key.value not in self.dir:
-      raise Exception("Function %s not defined at %s:%s"%(key.value, key.line, key.column))
+      raise Exception("Funci\xc3\xb3n %s indefinida en %s:%s"%(key.value, key.line, key.column))
 
   def get_params_of(self, value):
     return self.dir[value]['params']

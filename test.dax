@@ -73,6 +73,11 @@ dibujar(){
   &h = 123.23;
   &turtle = 1;
 
+  leer &j;
+  imprimir &j;
+  leer &turtle;
+  imprimir &turtle;
+
   adelante 60;
   rotar &i;
   adelante 60;
@@ -80,6 +85,9 @@ dibujar(){
   circulo -100, -60, 10, rgb(10,34,23), 2;
   triangulo &j, 10, ~uno(60, ~tres(1,-3)), 5, rgb(10, 34, 255), 2;
   texto -100, 60, 'juancho', rgb(255,34,23), 24;
+  adelante 60;
+  rotar &i;
+  adelante 60;
 
   &i = 1;
 

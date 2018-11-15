@@ -85,7 +85,7 @@ class DaxeVisitor(Visitor_Recursive):
         else:
             type = self.f_table.get_type_of(token.value)
         if fun['type'] != type:
-            raise Exception("Type missmatch in return (expected: %s) (given: %s) at %s:%s"%(fun['type'], type, token.line, token.column))
+            raise Exception("Tipos no coinciden con el regreso (esperado: %s) (dado: %s) en %s:%s"%(fun['type'], type, token.line, token.column))
         value = self.quads.token_to_dir(token);
         self.quads.gen_quad("RETURN", None, None, value)
 
@@ -163,7 +163,7 @@ class DaxeVisitor(Visitor_Recursive):
                     type = variables[token.value]["type"]
                     self.quads.add_id(id_name, type)
                 else:
-                    raise Exception("Variable not defined %s, at: %s:%s"%(items.children[0].value, items.children[0].line, items.children[0].column))
+                    raise Exception("Variable no definida %s, en: %s:%s"%(items.children[0].value, items.children[0].line, items.children[0].column))
 
     def a_g_asignacion_igual(self, items):
         # print("11 agregar = en operadores")
@@ -177,6 +177,10 @@ class DaxeVisitor(Visitor_Recursive):
     def a_g_escritura(self, items):
         # print("add key of printing")
         self.quads.gen_custom_quad("PRINT")
+    
+    def a_g_lectura(self, items):
+        print("add key of reading")
+        self.quads.gen_custom_quad("READ")
 
     def a_g_dibujar_rotar(self, items):
         # print("generate quad at the end for rotation movement")

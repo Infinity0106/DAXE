@@ -25,7 +25,7 @@ class DaxeVM:
 
       size = self.params.size()
       if size > 1000:
-        raise Exception("Stack overflow")
+        raise Exception("Pila sobrecargada")
 
       if record[0] == "+": #DONE
         self.left_op = mem.get(record[1])
@@ -95,6 +95,20 @@ class DaxeVM:
       elif record[0] == "PRINT": #DONE
         val = mem.get(record[3])
         print(val)
+
+      elif record[0] == "READ": #DONE
+        val = raw_input('leyendo:')
+        if (record[3] >= 2000 and record[3] <= 2999) or (record[3] >= 9000 and record[3] <= 9999):
+          try:
+            val = float(val)
+          except ValueError:
+            raise Exception("La lectura no fue un decimal")
+        if (record[3] >= 1000 and record[3] <= 1999) or (record[3] >= 8000 and record[3] <= 8999):
+          try:
+            val = int(val)
+          except ValueError:
+            raise Exception("La lectura no fue un entero")
+        mem.add(val, record[3])
       
       elif record[0] == "MOVF":
         self.left_op = mem.get(record[3])
@@ -112,7 +126,7 @@ class DaxeVM:
         self.flow.push(i)
         self.current_fun.push(record[3])
         if len(self.flow.stack)>1000:
-          raise Exception("Stack overflow calling function %s"%(record[3]))
+          raise Exception("Pila sobrecargada llamando a la funci\xc3\xb3n %s"%(record[3]))
         i = dir_fun.dir[record[3]]['start']-1
         params_stack = self.params.top_arg()
         for key, value in dir_fun.dir[record[3]]['params'].items():
@@ -120,6 +134,8 @@ class DaxeVM:
 
       elif record[0] == "SCUAD":
         self.params.push("(")
+        self.current_x = turtle.xcor()
+        self.current_y = turtle.ycor()
       
       elif record[0] == "ECUAD":
         params = self.params.pop_arg().stack
@@ -140,9 +156,17 @@ class DaxeVM:
         turtle.fd(params[3])
         turtle.left(90)
         turtle.fill(False)
+        turtle.pu()
+        turtle.setx(self.current_x)
+        turtle.sety(self.current_y)
+        turtle.seth(0)
+        turtle.pensize(1)
+        turtle.pd()
       
       elif record[0] == "SCIR":
         self.params.push("(")
+        self.current_x = turtle.xcor()
+        self.current_y = turtle.ycor()
       
       elif record[0] == "ECIR":
         params = self.params.pop_arg().stack
@@ -156,9 +180,17 @@ class DaxeVM:
         turtle.pensize(params[0])
         turtle.circle(params[2])
         turtle.fill(False)
+        turtle.pu()
+        turtle.setx(self.current_x)
+        turtle.sety(self.current_y)
+        turtle.seth(0)
+        turtle.pensize(1)
+        turtle.pd()
       
       elif record[0] == "STRI":
         self.params.push("(")
+        self.current_x = turtle.xcor()
+        self.current_y = turtle.ycor()
       
       elif record[0] == "ETRI":
         params = self.params.pop_arg().stack
@@ -180,9 +212,17 @@ class DaxeVM:
         turtle.left(2*(180-alfa))
         turtle.forward(l)
         turtle.fill(False)
+        turtle.pu()
+        turtle.setx(self.current_x)
+        turtle.sety(self.current_y)
+        turtle.seth(0)
+        turtle.pensize(1)
+        turtle.pd()
       
       elif record[0] == "STXT":
         self.params.push("(")
+        self.current_x = turtle.xcor()
+        self.current_y = turtle.ycor()
       
       elif record[0] == "ETXT":
         params = self.params.pop_arg().stack
@@ -194,6 +234,12 @@ class DaxeVM:
         turtle.color(self.regtotup(params[1]))
         turtle.write(params[2],font=("Arial", params[0], "normal"))
         turtle.color((0,0,0))
+        turtle.pu()
+        turtle.setx(self.current_x)
+        turtle.sety(self.current_y)
+        turtle.seth(0)
+        turtle.pensize(1)
+        turtle.pd()
       
       elif record[0] == "PARAM":
         val = mem.get(record[1])
@@ -232,10 +278,10 @@ class DaxeVM:
       elif record[0] == "VERIFY":
         value = mem.get(record[1])
         if not (value >= record[2] and value <= record[3]):
-          raise Exception("Array index out of bounds")
+          raise Exception("Indice del arreglo fuera de rango")
 
       else:
-        raise Exception("Unrecognized action %s"%(record[0]))
+        raise Exception("Acci\xc3\xb3n no reconocida %s"%(record[0]))
       i+=1
 
     canvasvg.warnings(canvasvg.NONE)
