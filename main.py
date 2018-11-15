@@ -3,7 +3,9 @@ from visitor import DaxeVisitor
 from transformer import DaxeTransformer
 import sys
 
-sys.tracebacklimit = 0 #used in production
+# sys.tracebacklimit = 0 #used in production
+reload(sys)  # Reload does the trick!
+sys.setdefaultencoding('UTF8')
 
 daxe_parser = Lark('''
 g_iniciar_programa: g_nombre_programa g_variables? g_funciones* g_main

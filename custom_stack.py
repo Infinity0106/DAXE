@@ -53,9 +53,12 @@ class Stack:
   def top_arg(self):
     #TODO: make it work
     tmp = Stack()
+    val = None
     for i in reversed(self.stack):
       if i != "(":
-        tmp.push(self.top())
+        tmp.push(i)
       else:
         break
+    while(val != "(" and len(self.stack)>0):
+      val = self.stack.pop()
     return tmp;

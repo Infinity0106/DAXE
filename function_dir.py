@@ -54,7 +54,7 @@ class FunctionsDir:
     self.dir[self.current_func]['tmp_size'] = size
 
   def add_variable(self, var_name):
-    if var_name in self.dir[self.current_func]["vars"] or var_name in self.dir[self.program_key]["vars"]:
+    if var_name in self.dir[self.current_func]["vars"] or ("vars" in self.dir[self.program_key] and var_name in self.dir[self.program_key]["vars"]):
       raise Exception("Declaraci\xc3\xb3n m\xc3\xbaltiple de variable(%s) en la funci\xc3\xb3n(%s)"%(var_name, self.current_func))
     self.current_var = var_name
     self.dir[self.current_func]["vars"][var_name]={
@@ -65,9 +65,12 @@ class FunctionsDir:
   def get_current_vars_table(self):
     if "vars" in self.dir[self.current_func]:
       tmp = self.dir[self.current_func]["vars"].copy()
-      tmp.update(self.dir[self.program_key]["vars"])
-    else:
+      if "vars" in self.dir[self.program_key]:
+        tmp.update(self.dir[self.program_key]["vars"])
+    elif "vars" in self.dir[self.program_key]:
       tmp = self.dir[self.program_key]["vars"]
+    else:
+      tmp = {}
     return tmp
 
   def validate_existence(self, key):
@@ -85,12 +88,14 @@ class FunctionsDir:
 
   def get_type_of(self, var_id):
     tmp = self.dir[self.current_func]["vars"].copy()
-    tmp.update(self.dir[self.program_key]["vars"])
+    if "vars" in self.dir[self.program_key]:
+      tmp.update(self.dir[self.program_key]["vars"])
     return tmp[var_id]["type"]
 
   def get_dirV_of(self, var_id):
     tmp = self.dir[self.current_func]["vars"].copy()
-    tmp.update(self.dir[self.program_key]["vars"])
+    if "vars" in self.dir[self.program_key]:
+      tmp.update(self.dir[self.program_key]["vars"])
     return tmp[var_id]["dirV"]
   
   def get_aviable_dir(self, type, is_global):

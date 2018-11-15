@@ -1,0 +1,30 @@
+programa "find";
+
+dibujar(){
+  var &i : entero, &lista : entero[5], &encontrar : entero, &index : entero;
+
+  &i=0;
+  &index=-1;
+  leer &encontrar;
+
+  mientras(&i < 5){
+    leer &lista[&i];
+    &i=&i+1;
+  }
+
+  &i=0;
+  mientras(&i < 5){
+    si(&lista[&i] == &encontrar){
+      &index = &i;
+      &i = 5; //simular break;
+    }
+    &i=&i+1;
+  }
+
+  si(&index > -1){
+    imprimir &index;
+    imprimir &lista[&index];
+  }sino{
+    imprimir &index;
+  }
+}

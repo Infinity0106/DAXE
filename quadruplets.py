@@ -58,10 +58,11 @@ class Quadruplets:
       operator = self.operators.pop()
       result_type = self.semantic_cube.cube[left_type][right_type][operator]
       if result_type == "ERROR":
-        raise Exception("Tipos no coinciden en la asignaci\xc3\xb3n (tipos: %s) a %s (tipos: %s), en: %s:%s"%(right_type, left_operand, left_type, left_operand.line, left_operand.column))
+        print(left_operand, left_type, right_operand, right_type)
+        raise Exception("Tipos no coinciden en la %s (tipos: %s) a %s (tipos: %s), en: %s:%s"%(operator, right_type, left_operand, left_type, left_operand.line, left_operand.column))
       else:
         self.num_aviables+=1
-        result_name = Token("T_TMP_ID", 'tmp_'+str(result_type)+'_'+str(self.num_aviables))
+        result_name = Token("T_TMP_ID", 'tmp_'+str(result_type)+'_'+str(self.num_aviables), line=left_operand.line, column= left_operand.column)
         # print(result_name.value)
         left = self.token_to_dir(left_operand)
         right = self.token_to_dir(right_operand)
@@ -289,8 +290,8 @@ class Quadruplets:
     return value
 
   def start_verify_array(self):
-    id = self.operands.pop()
-    type = self.types.pop()
+    id = self.operands.top()
+    type = self.types.top()
     var_table = self.fun_dir.get_current_vars_table()
     if not "dim" in var_table[id]:
       raise Exception("Variable (%s) no es un arreglo en %s:%s"%(id.value, id.line, id.column))
@@ -305,6 +306,8 @@ class Quadruplets:
   def generate_array_access(self):
     aux = self.operands.pop()
     aux_type = self.types.pop()
+    array_id = self.operands.pop()
+    array_type = self.types.pop()
 
     if aux_type != "entero":
       raise Exception("El \xc3\xadndice del arreglo (%s) no es un entero en %s:%s"%(aux.value, aux.line, aux.column))
@@ -312,15 +315,15 @@ class Quadruplets:
     base = self.curren_arr["dirV"]
 
     self.num_aviables+=1
-    result_name = Token("T_TMP_ID", 'tmp_'+str(aux_type)+'_'+str(self.num_aviables))
-    base_name = Token("T_NUM_INT", str(base))
+    result_name = Token("T_TMP_ID", 'tmp_'+str(array_type)+'_'+str(self.num_aviables), line=aux.line, column= aux.column)
+    base_name = Token("T_NUM_INT", str(base), line=aux.line, column= aux.column)
 
     left = self.token_to_dir(aux)
     result = self.token_to_dir(result_name)
     dir_base = self.token_to_dir(base_name)
     self.gen_quad("+", left, dir_base, result)
 
-    tmp_token = Token("T_TMP_DIR", '('+str(result)+')')
+    tmp_token = Token("T_TMP_DIR", '('+str(result)+')', line=aux.line, column= aux.column)
     self.operands.push(tmp_token)
-    self.types.push(aux_type)
+    self.types.push(array_type)
     self.operators.pop()

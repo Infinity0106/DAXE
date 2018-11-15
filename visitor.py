@@ -179,7 +179,7 @@ class DaxeVisitor(Visitor_Recursive):
         self.quads.gen_custom_quad("PRINT")
     
     def a_g_lectura(self, items):
-        print("add key of reading")
+        # print("add key of reading")
         self.quads.gen_custom_quad("READ")
 
     def a_g_dibujar_rotar(self, items):

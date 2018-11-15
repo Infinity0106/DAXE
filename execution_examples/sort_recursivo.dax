@@ -1,0 +1,38 @@
+programa "find";
+var &lista : decimal[100], &tmp : decimal;
+
+funcion : void ~bubbleSort(&np : entero){
+  var &ii : entero;
+  si(&np > 1){
+    &ii=0;
+    mientras(&ii < &np-1){
+      si(&lista[&ii] > &lista[&ii+1]){
+        &tmp = &lista[&ii];
+        &lista[&ii] = &lista[&ii+1];
+        &lista[&ii+1] = &tmp;
+      }
+      &ii=&ii+1;
+    }
+
+    ~bubbleSort(&np-1);
+  }
+}
+
+dibujar(){
+  var &n : entero, &i : entero;
+  leer &n;
+
+  &i=0;
+  mientras(&i<&n){
+    leer &lista[&i];
+    &i=&i+1;
+  }
+
+  ~bubbleSort(&n);
+
+  &i=0;
+  mientras(&i<&n){
+    imprimir &lista[&i];
+    &i=&i+1;
+  }
+}

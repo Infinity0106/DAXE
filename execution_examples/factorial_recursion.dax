@@ -1,0 +1,17 @@
+programa "factorial";
+
+funcion : entero ~factorial(&ii : entero){
+  var &tmp : entero;
+
+  si(&ii >= 1){
+    &tmp = &ii*~factorial(&ii-1);
+  }sino{
+    &tmp = 1;
+  }
+
+  regresar &tmp;
+}
+
+dibujar(){
+  imprimir ~factorial(6);
+}

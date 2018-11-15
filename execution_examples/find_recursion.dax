@@ -1,0 +1,43 @@
+programa "findRecursive";
+var &lista : decimal[100];
+
+funcion : entero ~find(&izq : entero, &der : entero, &ele : entero){
+  var &tmp : entero;
+
+  si(&izq > &der){
+    &tmp = -1;
+  }sino{
+    si(&lista[&izq] == &ele){
+      &tmp = &izq;
+    }sino{
+      si(&lista[&der] == &ele){
+        &tmp = &der;
+      }sino{
+        &tmp = ~find(&izq + 1, &der - 1, &ele);
+      }
+    }
+  }
+
+  regresar &tmp;
+}
+
+dibujar(){
+  var &n : entero, &i : entero, &index : entero, &enc : decimal;
+  leer &n;
+
+  &i=0;
+  mientras(&i<&n){
+    leer &lista[&i];
+    &i=&i+1;
+  }
+
+  leer &enc;
+  &index = ~find(0, &n-1, &enc);
+
+  si(&index > -1){
+    imprimir &index;
+    imprimir &lista[&index];
+  }sino{
+    imprimir &index;
+  }
+}

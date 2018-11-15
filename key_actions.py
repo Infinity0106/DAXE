@@ -30,5 +30,6 @@ class KeyActions:
       "ETXT":26,
       "ENDPROC":27,
       "ERA":28,
-      "RETURN":29
+      "RETURN":29,
+      "READ":30
     }

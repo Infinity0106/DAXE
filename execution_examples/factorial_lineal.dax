@@ -1,0 +1,16 @@
+programa "factorial";
+
+dibujar(){
+  var &i : entero, &n : entero, &factorial : entero;
+
+    leer &n;
+
+    &factorial = 1;
+    &i = 1;
+    mientras(&i <= &n){
+      &factorial = &factorial*&i;
+      &i=&i+1;
+    }
+
+    imprimir &factorial;
+}

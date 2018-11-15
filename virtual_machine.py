@@ -98,12 +98,16 @@ class DaxeVM:
 
       elif record[0] == "READ": #DONE
         val = raw_input('leyendo:')
-        if (record[3] >= 2000 and record[3] <= 2999) or (record[3] >= 9000 and record[3] <= 9999):
+        if ((record[3] >= 2000 and record[3] <= 2999) or 
+           (record[3] >= 9000 and record[3] <= 9999) or 
+           (isinstance(record[3], str) and '(11' in record[3])):
           try:
             val = float(val)
           except ValueError:
             raise Exception("La lectura no fue un decimal")
-        if (record[3] >= 1000 and record[3] <= 1999) or (record[3] >= 8000 and record[3] <= 8999):
+        if ((record[3] >= 1000 and record[3] <= 1999) or
+           (record[3] >= 8000 and record[3] <= 8999) or
+           (isinstance(record[3], str) and '(10' in record[3])):
           try:
             val = int(val)
           except ValueError:
@@ -130,7 +134,7 @@ class DaxeVM:
         i = dir_fun.dir[record[3]]['start']-1
         params_stack = self.params.top_arg()
         for key, value in dir_fun.dir[record[3]]['params'].items():
-          mem.add(params_stack.top(), value['dirV']);
+          mem.add(params_stack.pop(), value['dirV']);
 
       elif record[0] == "SCUAD":
         self.params.push("(")
