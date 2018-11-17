@@ -13,5 +13,9 @@ funcion : entero ~factorial(&ii : entero){
 }
 
 dibujar(){
-  imprimir ~factorial(6);
+  var &n : entero;
+  
+  leer &n;
+
+  imprimir ~factorial(&n);
 }

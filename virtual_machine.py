@@ -257,7 +257,7 @@ class DaxeVM:
         if call_stack != '':
           params = self.params.top_arg();
           for key, value in dir_fun.dir[call_stack]['params'].items():
-            mem.add(params.top(), value['dirV']);
+            mem.add(params.pop(), value['dirV']);
       
       elif record[0] == "ERA":
         self.params.push("(")
