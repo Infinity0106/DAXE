@@ -27,14 +27,14 @@ class DaxeVisitor(Visitor_Recursive):
 
     def a_t_id_programa(self, items):
         """
-            crear la primera función
+            crear la primera funcion
         """
         # print("2.Add id-name and type program a DirFunc")
         self.f_table.create_program(items.children[0].value, "void")
 
     def a_t_var(self, items):
         """
-            crear una tabla de variables en la función actual
+            crear una tabla de variables en la funcion actual
         """
         # print("3.If current Func doesn't have a VarTable then Create VarTable and link it to current Func")
         self.f_table.create_var_table()
@@ -60,9 +60,9 @@ class DaxeVisitor(Visitor_Recursive):
 
     def a_t_end_program(self, items):
         """
-            término del programa, 
+            termino del programa, 
             eliminar directorio de funciones e 
-            inicializar la máquina virtual
+            inicializar la maquina virtual
         """
         # print("6.Delete DirFunc and current VarTable(Global)")
         # pprint.pprint(self.quads.records)
@@ -80,7 +80,7 @@ class DaxeVisitor(Visitor_Recursive):
 
     def a_t_fun_id(self, items):
         """
-            agregar una nueva función a 
+            agregar una nueva funcion a 
             la tabla de funciones
         """
         # print("""9.Search for id-name in DirFunc
@@ -97,7 +97,7 @@ class DaxeVisitor(Visitor_Recursive):
     
     def a_t_fun_r_par(self, items):
         """
-            vaciar la columna de parámetros
+            vaciar la columna de parametros
         """
         # print("4. insert into dirfunc the number of parameters defined")
         self.f_table.create_params_of_function()
@@ -105,7 +105,7 @@ class DaxeVisitor(Visitor_Recursive):
     def a_g_fun_start_exec(self, items):
         """
             agregar la semilla a regresar 
-            cuando termine la función
+            cuando termine la funcion
         """
         # print("inter into dir func the current quadruple tocunter to determine where the proceadure starts")
         self.f_table.define_func_start_point(self.quads.current_quad())
@@ -231,7 +231,6 @@ class DaxeVisitor(Visitor_Recursive):
             agregar operando de la zona izquierda del operando
         """
         # print("10. agregar id de la asignacion")
-        #TODO: poder insertar arreglos
         variables=self.f_table.get_current_vars_table()
         id_name=""
         type=""
@@ -263,7 +262,7 @@ class DaxeVisitor(Visitor_Recursive):
     def a_g_escritura(self, items):
         """
             generar quad de print sacando 
-            el último operand de la pila
+            el ultimo operand de la pila
         """
         # print("add key of printing")
         self.quads.gen_custom_quad("PRINT")
@@ -271,8 +270,8 @@ class DaxeVisitor(Visitor_Recursive):
     def a_g_lectura(self, items):
         """
             genera quad de read sacando de 
-            la pila el último operador para 
-            saber qué variable
+            la pila el ultimo operador para 
+            saber que variable
         """
         # print("add key of reading")
         self.quads.gen_custom_quad("READ")
@@ -280,7 +279,7 @@ class DaxeVisitor(Visitor_Recursive):
     def a_g_dibujar_rotar(self, items):
         """
             genera quadruplo de rotar 
-            con el último operando
+            con el ultimo operando
         """
         # print("generate quad at the end for rotation movement")
         self.quads.gen_custom_quad("ROT")
@@ -288,14 +287,14 @@ class DaxeVisitor(Visitor_Recursive):
     def a_g_dibujar_adelante(self, items):
         """
             generar quadruplo de mover 
-            lápiz adelante con el último operando
+            lapiz adelante con el ultimo operando
         """
         # print("generate quad at the end for forward movement")
         self.quads.gen_custom_quad("MOVF")
 
     def a_g_condicional_1(self, items):
         """
-            evaluar tipo booleano y su último 
+            evaluar tipo booleano y su ultimo 
             operando para poder generar el gotof,
             guardar pila de saltos
         """
@@ -311,14 +310,14 @@ class DaxeVisitor(Visitor_Recursive):
 
     def a_g_condicional_2(self, items):
         """
-            sacar de la pila de saltos y rellenar los vacíos
+            sacar de la pila de saltos y rellenar los vacios
         """
         # print("end = pjumps.pop(); fill(end, counter)")
         self.quads.end_if()
 
     def a_g_condicional_3(self, items):
         """
-            generación de cuádruplos para el else
+            generacion de cuadruplos para el else
         """
         # print("""gen GOTO
         #         false = pjumps.pop()
@@ -328,14 +327,14 @@ class DaxeVisitor(Visitor_Recursive):
 
     def a_g_ciclo_start(self, items):
         """
-            agregar cuádruplo a la pila de jumps
+            agregar cuadruplo a la pila de jumps
         """
         # print("pjumps.push(count)")
         self.quads.while_start()
 
     def a_g_ciclo_mid(self, items):
         """
-            generar gotof después de evaluar expresión
+            generar gotof despues de evaluar expresion
         """
         # print("""exp_type=ptypes.pop()
         #         if(exp_type != bool) error
@@ -347,7 +346,7 @@ class DaxeVisitor(Visitor_Recursive):
 
     def a_g_ciclo_end(self, items):
         """
-            generar goto a evaluar la expresión, 
+            generar goto a evaluar la expresion, 
             fill del gotof
         """
         # print("""end = pjumps.pop
@@ -368,8 +367,8 @@ class DaxeVisitor(Visitor_Recursive):
 
     def a_g_funcion_era(self, items):
         """
-            generar el cuádruplo de era 
-            e inicializa los parámetros counter
+            generar el cuadruplo de era 
+            e inicializa los parametros counter
         """
         # print("""generate action era size (activation record expansion new size)
         #         start the paramter counter (k) in 1
@@ -379,30 +378,30 @@ class DaxeVisitor(Visitor_Recursive):
     def a_g_funcion_param(self, items):
         """
             pop de operandos y tipos y validar 
-            posición y el tipo que tenga.
+            posicion y el tipo que tenga.
         """
         # print("argument = pilao.pop(), argumenttype = ptypes.pop, verify type with paramter, generate parameter argument argument number")
         self.quads.gen_parameter()
 
     def a_g_funcion_params_more(self, items):
         """
-            sumar uno al contador de parámetros
+            sumar uno al contador de parametros
         """
         # print("k++ move to the next paramter")
         self.quads.more_params()
 
     def a_g_funcion_verify_params(self, items):
         """
-            validar que tengan el mismo tamaño
+            validar que tengan el mismo tamano
         """
         # print("verify that the last paramter points to null")
         self.quads.verify_params_len(items.children[0])
 
     def a_g_funcion_end_instance(self, items):
         """
-            generar el gosub de la función en 
+            generar el gosub de la funcion en 
             caso de return genera un asignacion 
-            después del gosub
+            despues del gosub
         """
         # print("generate action gosub,prodecure_name, none, inital-address")
         tmp_fun_name = self.fun_name.pop()
@@ -414,56 +413,56 @@ class DaxeVisitor(Visitor_Recursive):
 
     def a_g_cuadrado_init(self, items):
         """
-            generar era para el cuadrado ‘SCUAD’
+            generar era para el cuadrado 'SCUAD'
         """
         # print("init quad for drawing")
         self.quads.draw_era_sub("SCUAD")
 
     def a_g_cuadrado_end(self, items):
         """
-            genera gosub para el cuadrado ‘ECUAD’
+            genera gosub para el cuadrado 'ECUAD'
         """
         # print("end quad of drawing")
         self.quads.draw_era_sub("ECUAD")
 
     def a_g_circulo_init(self, items):
         """
-            generar era para el círculo ‘SCIR’
+            generar era para el circulo 'SCIR'
         """
         # print("init quad for drawing")
         self.quads.draw_era_sub("SCIR")
 
     def a_g_circulo_end(self, items):
         """
-            genera gosub para el círculo ‘ECIR’
+            genera gosub para el circulo 'ECIR'
         """
         # print("end quad of drawing")
         self.quads.draw_era_sub("ECIR")
 
     def a_g_triangulo_init(self, items):
         """
-            generar era para el triángulo ‘STRI’
+            generar era para el triangulo 'STRI'
         """
         # print("init quad for drawing")
         self.quads.draw_era_sub("STRI")
     
     def a_g_triangulo_end(self, items):
         """
-            genera gosub para el triángulo ‘ETRI’
+            genera gosub para el triangulo 'ETRI'
         """
         # print("end quad of drawing")
         self.quads.draw_era_sub("ETRI")
     
     def a_g_texto_init(self, items):
         """
-            generar era para el texto ‘STXT’
+            generar era para el texto 'STXT'
         """
         # print("init quad for drawing")
         self.quads.draw_era_sub("STXT")
     
     def a_g_texto_end(self, items):
         """
-            genera gosub para el texto ‘ETXT’
+            genera gosub para el texto 'ETXT'
         """
         # print("end quad of drawing")
         self.quads.draw_era_sub("ETXT")
@@ -471,21 +470,21 @@ class DaxeVisitor(Visitor_Recursive):
     def a_g_exp_param(self, items):
         """
             pop pila de operadores para 
-            poder insertar en parámetros
+            poder insertar en parametros
         """
         # print("generate expression params for drawing")
         self.quads.draw_params()
 
     def a_g_draw_p_one(self, items):
         """
-            incrementar el contador de parámetros
+            incrementar el contador de parametros
         """
         # print("increment the paramter number")
         self.quads.more_params()
 
     def a_g_draw_t_color(self, items):
         """
-            pasar rgb como parámetros y generar quad
+            pasar rgb como parametros y generar quad
         """
         # print("get color of the fill")
         token = items.children[0]
@@ -493,7 +492,7 @@ class DaxeVisitor(Visitor_Recursive):
 
     def a_g_draw_stroke(self, items):
         """
-            generar parámetro de grosor de contorno
+            generar parametro de grosor de contorno
         """
         # print("hello")
         token = items.children[0]
@@ -534,7 +533,7 @@ class DaxeVisitor(Visitor_Recursive):
     def a_g_var_array_size(self, items):
         """
             crear la columna en la tabla de 
-            variable y almacenar su tamaño
+            variable y almacenar su tamano
         """
         # print("create the structure for size (we will only store the size)");
         size = int(items.children[0].value)
@@ -542,8 +541,8 @@ class DaxeVisitor(Visitor_Recursive):
 
     def a_g_var_array_right(self, items):
         """
-            asignar la dirección de base y sumarle 
-            al contador de direcciones el tamaño del arreglo
+            asignar la direccion de base y sumarle 
+            al contador de direcciones el tamano del arreglo
         """
         # print("cambira direccion base siguiente");
         self.f_table.next_aviable_dir()
@@ -565,21 +564,21 @@ class DaxeVisitor(Visitor_Recursive):
         """
             verificar que es un arreglo la variable 
             y asignar un fondo falso para evaluar 
-            expresión interna
+            expresion interna
         """
         # print("2 popila , verify is a array, push poper (")
         self.quads.start_verify_array();
 
     def a_access_array(self, items):
         """
-            genera el quad de verificación con límite superior
+            genera el quad de verificacion con limite superior
         """
         # print("3 generate verificaiton quad")
         self.quads.verify_array();
 
     def a_access_array_end(self, items):
         """
-            generar el cuádruplo de dirección el tipo ‘(dir)’
+            generar el cuadruplo de direccion el tipo '(dir)'
         """
         # print("5 pop operator")
         self.quads.generate_array_access();

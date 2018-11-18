@@ -33,7 +33,7 @@ class Stack:
     #   self.has_instance=True
     #   self.top().push(item)
     # else:
-      self.stack.append(item)
+    self.stack.append(item)
 
   def pop(self):
     """
