@@ -1,35 +1,14 @@
 programa "prueba";
-var &i : entero, &j : decimal;
-
-funcion : entero ~uno(&juan : entero, &pancho : decimal){
-  var &k : entero;
-  &k=100;
-  si(&juan < &pancho){
-    imprimir &i;
-  } sino {
-    imprimir &j;
-  }
-  regresar &k;
-}
 
 dibujar(){
-  var &h : decimal, &x:entero, &y:decimal;
+  var &turtle : entero;
 
-  &x = 4;
-  &y = 4.3;
-  &i = 10;
-  &j = 10.3;
+  &turtle = 1;
 
-  adelante 60;
-  rotar &i;
-  cuadrado 5, 6, 19, rgb(10,34,23), 5;
-  circulo 0,0,10,rgb(10,34,23),2;
-  triangulo &j, 10, ~uno(&x,&y),5, rgb(10,34,23), 2;
-  texto 1, 0, 'juancho', rgb(10,34,23), 24;
-
-  mientras(&i < 10){
-    &i = &i + 1;
+  mientras(&turtle < 100){
+    adelante 90;
+    rotar 89;
+    adelante 1+&turtle;
+    &turtle = &turtle+1;
   }
-
-  ~uno(&i, &j);
 }

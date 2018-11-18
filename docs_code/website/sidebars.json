@@ -1,0 +1,11 @@
+{
+  "docs": {
+    "Empieza Aqui": ["doc1"],
+    "Informacion general": ["doc7"],
+    "Variables": ["doc2"],
+    "Condicional": ["doc3"],
+    "Ciclos": ["doc4"],
+    "Funciones": ["doc5"],
+    "Dibujos": ["doc6"]
+  }
+}
