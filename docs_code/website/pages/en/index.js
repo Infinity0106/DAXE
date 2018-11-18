@@ -130,8 +130,14 @@ const FeatureCallout = () => (
     className="productShowcaseSection paddingBottom"
     style={{ textAlign: "center" }}
   >
-    <h2>Feature Callout</h2>
-    <MarkdownBlock>These are features of this project</MarkdownBlock>
+    <h2>Demo</h2>
+
+    <DemoVideo />
+    {/* <MarkdownBlock>
+      [![Everything Is
+      AWESOME](http://i.imgur.com/Ot5DWAW.png)](https://youtu.be/StTqXEQ2l-Y?t=35s
+      "Everything Is AWESOME")
+    </MarkdownBlock> */}
   </div>
 );
 
@@ -213,8 +219,8 @@ class Index extends React.Component {
         <HomeSplash language={language} />
         <div className="mainContainer">
           <Features />
-          {/* <FeatureCallout />
-          <LearnHow />
+          <FeatureCallout />
+          {/* <LearnHow />
           <TryOut />
           <Description /> */}
           <Showcase language={language} />
@@ -223,5 +229,15 @@ class Index extends React.Component {
     );
   }
 }
+
+const DemoVideo = () => {
+  return (
+    <div>
+      <video width="50%" height="50%" playsInline loop controls>
+        <source src="/video/demo.mp4" type="video/mp4" />
+      </video>
+    </div>
+  );
+};
 
 module.exports = Index;
