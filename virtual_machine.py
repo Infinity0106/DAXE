@@ -7,6 +7,16 @@ import math
 
 class DaxeVM:
   def __init__(self, quads, dir_fun, mem):
+    """
+      inicialize la maquina virtual, pasando como prametros
+      los cuadruplos generados, la instancia del direcotiro
+      de funciones y una instancia de la memoria de ejecucino
+      previamente creada,
+
+      dentro se genera un loop para cada key en un switch
+      se tiene que hacer en un loop para poder manipular
+      directamente el contandor de index
+    """
     # pprint.pprint(dir_fun.dir)
     # pprint.pprint(mem.directions)
     # pprint.pprint(quads)
@@ -263,21 +273,8 @@ class DaxeVM:
         self.params.push("(")
       
       elif record[0] == "RETURN":
-        # tmp_i = self.flow.top() + 1
-        # record2 = quads[tmp_i];
         fun_name = self.current_fun.top()
         mem.add_dir_to_dir(record[3], dir_fun.dir[fun_name]['return'])
-
-        # if record2[0] == 'PARAM':
-        #   mem.add(value, record2[1])
-        # elif record2[0] == '=':
-        #   mem.add(value, record2[1])
-        # elif record2[0] == 'PRINT':
-        #   mem.add(value, record2[3])
-        # elif record2[0] == 'GOSUB':
-        #   mem.add(value, record2[3])
-        # elif record2[0] == 'RETURN':
-        #   mem.add(value, record2[3])
 
       elif record[0] == "VERIFY":
         value = mem.get(record[1])
@@ -288,10 +285,18 @@ class DaxeVM:
         raise Exception("Acci\xc3\xb3n no reconocida %s"%(record[0]))
       i+=1
 
+    # creacion de la imagen creada en el programa
     canvasvg.warnings(canvasvg.NONE)
     canvasvg.saveall("image.svg", turtle.getcanvas())
     turtle.done()
 
   def regtotup(self, str):
+    """
+      convierte string de rgb a numeros que se
+      pueden pasar como argumento al color 
+      en lugar de string.
+      
+      str: 'rgb(10,10,10)'
+    """
     arr = [int(s) for s in re.findall(r'\b\d+\b', str)]
     return (arr[0],arr[1],arr[2])

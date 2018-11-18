@@ -143,7 +143,7 @@ class Parser:
 
         if not solutions:
             expected_tokens = [t.expect for t in column.to_scan]
-            raise ParseError('Unexpected end of input! Expecting a terminal of: %s' % expected_tokens)
+            raise ParseError('Fin inesperado de input! Esperando terminal de tipo: %s' % expected_tokens)
 
         elif len(solutions) == 1:
             tree = solutions[0]

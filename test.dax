@@ -1,8 +1,8 @@
 programa "prueba";
 var &i : entero, 
     &j : decimal, 
-    &x : decimal, 
-    &y : decimal,
+    &x : entero, 
+    &y : entero,
     &arreglo : entero[10],
     &berny : entero;
 
@@ -67,9 +67,9 @@ dibujar(){
   var &h : decimal, &turtle : entero;
 
   &i = 120;
-  &j = 50;
-  &x = 4.65;
-  &y = 7.34;
+  &j = 50.34;
+  &x = 4;
+  &y = 7;
   &h = 123.23;
   &turtle = 1;
 
@@ -117,7 +117,7 @@ dibujar(){
     &turtle = &turtle+1;
   }
 
-  &i = ~uno(&x, &j);
+  &i = ~uno(&x, &y);
   imprimir &i;
   imprimir ~factorial(6);
   ~print(3);

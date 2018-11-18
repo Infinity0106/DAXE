@@ -3,7 +3,7 @@ from visitor import DaxeVisitor
 from transformer import DaxeTransformer
 import sys
 
-# sys.tracebacklimit = 0 #used in production
+sys.tracebacklimit = 0 #used in production
 reload(sys)  # Reload does the trick!
 sys.setdefaultencoding('UTF8')
 

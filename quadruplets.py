@@ -33,22 +33,59 @@ class Quadruplets:
     self.curren_arr = None
 
   def link_fun_dir(self, fun):
+    """
+      pasar la instancia del directorio de funciones
+      a los quadruplos para poder usar sus funciones
+
+      fun: instancia FunDir
+    """
     self.fun_dir = fun
 
   def current_quad(self):
+    """
+     Regresa el indice de los records
+     se obtiene por medio del tamano del
+     arreglo
+    """
     return len(self.records)
 
   def add_id(self, name, type):
+    """
+      Agregar un id y tu tipo para 
+      que los dos stacks esten en sincronia
+
+      name: Token,
+      type: "decima", "entero", "booleano"
+    """
     self.types.push(type)
     self.operands.push(name)
 
   def add_operator(self, item):
+    """
+      Agregar a la pila de operadoes cual es 
+      el ultimo detectado
+
+      item: "=","<=",">=",+,-,*,/,... etc.
+    """
     self.operators.push(item)
 
   def pop_operator(self):
+    """
+      sacar un operador de la pila de operandos,
+      se creo para la interaccion con la clase
+      de visitantes
+    """
     self.operators.pop()
 
   def algorithm_with(self, labels):
+    """
+      Algorithm_with: toma como parametros un arreglo de operadores
+      ejemplo ["="] o ["/", "*"]
+
+      entra si el tope del operador esta en la lista,
+      despues se comparan los tipos para ver que no generen error
+      generan la variable temporal con la direccion correcta
+    """
     operator = self.operators.top()
     if operator in labels:
       right_operand = self.operands.pop()
@@ -74,6 +111,12 @@ class Quadruplets:
           self.types.push(result_type)
 
   def start_if(self, token):
+    """
+      saca el tipo del temproa, en caso de no
+      ser booleano, regresa error,
+      despues el resultado lo valida para generar
+      el gotof, y agrega a la pila de saltos
+    """
     exp_type = self.types.pop()
     if exp_type != "booleano":
       raise Exception("Tipos no coinciden tratando de evaluar si en %s:%s"%(token.line,token.column))
@@ -85,40 +128,72 @@ class Quadruplets:
     self.jumps.push(len(self.records)-1)
 
   def end_if(self):
+    """
+      se saca el saldo inicial
+      para poder rellenarlo con el cuadruplo despues
+      del bracket que cierra
+    """
     end = self.jumps.pop()
     self.fill_goto(end, len(self.records))
 
   def else_if(self):
+    """
+      genera el goto pero rellena el gotof
+      anterior y genera los jumps para
+      el goto del else
+    """
     self.gen_quad("GOTO", None, None, None)
     false = self.jumps.pop()
     self.jumps.push(len(self.records)-1)
     self.fill_goto(false, len(self.records))
 
   def gen_custom_quad(self, type):
+    """
+      genera quad custom, 
+      ya sea type que es la key,
+      se utiliza para el print, 
+      movf y rot, que solo tienen un resultado
+    """
     result_name = self.operands.pop()
     result_type = self.types.pop()
     result = self.token_to_dir(result_name)
     self.gen_quad(type, None, None, result)
 
   def gen_quad(self, op, lop, rop, res):
+    """
+      genera un cuadriplo a los records
+      op: key de operacion
+      lop: left operando, string o numero o none
+      rop: right operando, string o numero o none
+      res: resultado de la operacion string o numero o none
+    """
     if op == "=":
       self.records.append([op,rop,None,lop])
       # self.records.append([self.key_actions[op],rop,None,lop])
     else:
       self.records.append([op,lop,rop,res])
       # self.records.append([self.key_actions[op],lop,rop,res])
-    # pprint.pprint(self.records[-1])
-    # pprint.pprint(self.operands.stack)
-    # pprint.pprint(self.operators.stack)
   
   def fill_goto(self, index, value):
+    """
+      obtiene el cuadruplo que se quiere
+      rellenar con el index
+      y se rellena con el value, que es es la nueva direccion
+    """
     self.records[index][3] = value
-    # pprint.pprint(self.records)
 
   def while_start(self):
+    """
+      guarda el jump antes de la expresion
+      para poder rellenar el ultimo goto
+    """
     self.jumps.push(len(self.records))
 
   def while_mid(self, token):
+    """
+      genera el gotof despues de
+      evaluar la expresion
+    """
     exp_type = self.types.pop()
     if exp_type != "booleano":
       raise Exception("Tipos no coinciden tratando de evaluar si en %s:%s"%(token.line,token.column))
@@ -129,17 +204,31 @@ class Quadruplets:
     self.jumps.push(len(self.records)-1)
 
   def while_end(self):
+    """
+      saca el jump generado
+      para poder rellenar el
+      goto generado.
+    """
     end = self.jumps.pop()
     retornar = self.jumps.pop()
     self.gen_quad("GOTO", None, None, retornar)
     self.fill_goto(end, len(self.records))
 
   def gen_era(self, name, params_table):
+    """
+      inicializa el era para demostrar
+      iniciar de la fucnion
+    """
     self.gen_quad("ERA", None, None, name)
     self.parameter_count.push(0)
     self.current_params_table = params_table
 
   def gen_parameter(self):
+    """
+      generar el argumento
+      en el cuadruplo de param
+      y genera la key
+    """
     argument = self.operands.pop()
     argument_type = self.types.pop()
     try:
@@ -147,28 +236,46 @@ class Quadruplets:
       key, value = self.current_params_table.items()[current_num]
     except IndexError:
       raise Exception("Funci\xc3\xb3n no declarada con el mismo tama\xc3\xb1o de par\xc3\xa1metros en %s:%s"%(argument.line, argument.column))
-    result_type = self.semantic_cube.cube[argument_type][value["type"]]["="]
+    result_type = self.semantic_cube.cube[value["type"]][argument_type]["="]
     if result_type == "ERROR":
-      raise Exception("Tipos no coinciden en la asignaci\xc3\xb3n (tipo: %s) al par\xc3\xa1metro %s (tipo: %s), en: %s:%s"%(argument_type, argument.value, value['type'], argument.line, argument.column))
+      raise Exception("Tipos no coinciden en la asignaci\xc3\xb3n (tipo: %s) al par\xc3\xa1metro %s (tipo: %s), en: %s:%s"%(argument_type, key, value['type'], argument.line, argument.column))
     value = self.token_to_dir(argument)
     self.gen_quad("PARAM",value,None,"param"+str(current_num))
 
   def more_params(self):
+    """
+      suma el index de los apramestor +1
+      para que la key no se quede traslapada
+    """
     actual = self.parameter_count.pop()
     actual+=1
     self.parameter_count.push(actual)
 
   def verify_params_len(self, token):
+    """
+      verificar que los parametros
+      proporcionados sean del mismo
+      tamano que los parametros declarados
+      en la funcion
+    """
     actual = self.parameter_count.top()
     if not (actual == 0 and len(self.current_params_table) == 0) and actual+1 != len(self.current_params_table):
       raise Exception("Funci\xc3\xb3n no declarada con el mismo tama\xc3\xb1o de par\xc3\xa1metros en %s:%s"%(token.line, token.column))
     self.parameter_count.pop()
 
   def draw_era_sub(self, name):
+    """
+      generar el era de los dibujos
+    """
     self.gen_quad(name, None, None, None)
     self.parameter_count.push(0)
 
   def draw_params(self):
+    """
+      genera los parametros para 
+      dibujar estos pueden ser
+      validados con el tipo esperado
+    """
     argument = self.operands.pop()
     argument_type = self.types.pop()
     result_type = self.semantic_cube.cube[argument_type]["decimal"]["="]
@@ -182,16 +289,28 @@ class Quadruplets:
     # self.gen_quad("PARAM",value,None,"param"+str(self.parameter_count))
 
   def gen_draw_quad(self, value):
+    """
+      genera parametros para funciones de dibujar
+    """
     actual = self.parameter_count.top()
     dir = self.token_to_dir(value)
     self.gen_quad("PARAM",dir,None,"param"+str(actual))
     # self.gen_quad("PARAM",value,None,"param"+str(actual))
 
   def fill_main(self):
+    """
+      rellena el primer goto del programa
+      por que ya encontro la funcion main
+    """
     end = self.jumps.pop()
     self.fill_goto(end, len(self.records))
 
   def gen_return_assign(self, name, dir, type):
+    """
+      genera el return, al final se genera una asignacion
+      para poder obtener el valor de return
+      y guardarlo en un temporal
+    """
     # pprint.pprint(self.operands.stack)
     # pprint.pprint(self.operators.stack)
     # self.num_aviables+=1
@@ -214,12 +333,24 @@ class Quadruplets:
     self.types.push(type)
 
   def reset_tmp_counter(self):
+    """
+      reinicia los valor de contadores
+      para los temporales y poder ahorrar memoria
+    """
     self.num_aviables = 0;
     self.tmp_bool = 12000
     self.tmp_decimal = 11000
     self.tmp_int = 10000
 
   def token_to_dir(self, token, look_in = None):
+    """
+      token_to_dir: toke una variable tipo token
+      tiene propiedad de tipo y valor, look_in es un directorio de variables
+      si se porporciona busca ahi si no lo busca en la funcion actual
+
+      switch de tipo de tocken para saber que contador aumentar y que tipo
+      de variable es si es flotante, booleano, entero, contante, string
+    """
     value = None
     if token.type == "T_NUM_INT":
       tmp = self.memory.search(int(token.value), 5)
@@ -290,6 +421,11 @@ class Quadruplets:
     return value
 
   def start_verify_array(self):
+    """
+      Obtener el tope de los operandos y de los tipos(id del arreglo)
+      sin sacarlos, determinar si esta declarado como un arreglo
+      y agregar fondo falso a los operadores para las expresiones
+    """
     id = self.operands.top()
     type = self.types.top()
     var_table = self.fun_dir.get_current_vars_table()
@@ -299,11 +435,23 @@ class Quadruplets:
     self.add_operator("(")
 
   def verify_array(self):
+    """
+      obtener el tope de los operandos para determinar el valor
+      y crear cuadruplo este en el rango de la dimension
+    """
     tmp = self.operands.top()
     left = self.token_to_dir(tmp)
     self.gen_quad("VERIFY", left, 0, self.curren_arr["dim"])
 
   def generate_array_access(self):
+    """
+      Sacar los id del array y su expresion interna para accesso
+
+      si el index no es entero marca error
+      generan la suma de la direccion base mas el tamano del temporal
+      para tener la direccion y generar su temporal (T)
+      y agregarlo a los operadores
+    """
     aux = self.operands.pop()
     aux_type = self.types.pop()
     array_id = self.operands.pop()

@@ -1,19 +1,25 @@
 programa "find";
 
 dibujar(){
-  var &i : entero, &lista : entero[5], &encontrar : entero, &index : entero;
+  var &i : entero, 
+      &lista : entero[100], 
+      &encontrar : entero, 
+      &index : entero,
+      &n : entero;
 
   &i=0;
   &index=-1;
-  leer &encontrar;
+  leer &n;
 
-  mientras(&i < 5){
+  mientras(&i < &n){
     leer &lista[&i];
     &i=&i+1;
   }
 
+  leer &encontrar;
+
   &i=0;
-  mientras(&i < 5){
+  mientras(&i < &n){
     si(&lista[&i] == &encontrar){
       &index = &i;
       &i = 5; //simular break;

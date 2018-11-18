@@ -1,7 +1,7 @@
 programa "findRecursive";
 var &lista : decimal[100];
 
-funcion : entero ~find(&izq : entero, &der : entero, &ele : entero){
+funcion : entero ~find(&izq : entero, &der : entero, &ele : decimal){
   var &tmp : entero;
 
   si(&izq > &der){
